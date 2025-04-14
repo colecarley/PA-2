@@ -66,8 +66,14 @@ bool Graphics::Initialize(int width, int height) {
   m_vertCol = m_shader->GetAttribLocation("v_color");
 
   // Create the object
-  m_obj = new Cube();
-  m_obj->Initialize(m_vertPos, m_vertCol);
+  sun = new Pyramid();
+  sun->Initialize(m_vertPos, m_vertCol);
+
+  planet = new Cube();
+  planet->Initialize(m_vertPos, m_vertCol);
+
+  moon = new Cube();
+  moon->Initialize(m_vertPos, m_vertCol);
 
   // enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -77,8 +83,41 @@ bool Graphics::Initialize(int width, int height) {
 }
 
 void Graphics::Update(unsigned int dt, glm::vec3 speed) {
-  // Update the object
-  m_obj->Update(dt);
+  // update the Object.
+  glm::mat4 sun_tmat, sun_rmat, sun_smat;
+  ComputeTransforms(dt,                            // time
+                    {0.0f, 0.0f, 0.0f},            // speed
+                    {0.0f, 0.0f, 0.0f},            // distance
+                    {0.5f},                        // rotational speed
+                    glm::vec3{0.0f, 1.0f, 0.0f},   // rotational axis
+                    {2.0f, 2.0f, 2.0f},            // scale
+                    sun_tmat, sun_rmat, sun_smat); // sun: tmat, rmat, smat
+
+  sun->Update(sun_tmat * sun_rmat * sun_smat);
+
+  glm::mat4 planet_tmat, planet_rmat, planet_smat;
+  ComputeTransforms(dt,                          // time
+                    {1.0f, 0.0f, 1.0f},          // speed
+                    {8.0f, 0.0f, 8.0f},          // distance
+                    {1.0f},                      // rotational speed
+                    glm::vec3{0.0f, 1.0f, 0.0f}, // rotational axis
+                    {0.75f, 0.75f, 0.75f},       // scale
+                    planet_tmat, planet_rmat,
+                    planet_smat); // planet: tmat, rmat, smat
+
+  planet->Update(planet_tmat * planet_rmat * planet_smat);
+
+  glm::mat4 moon1_tmat, moon1_rmat, moon1_smat;
+  ComputeTransforms(dt,                          // time
+                    {3.0f, 3.0f, 0.0f},          // speed
+                    {3.0f, 3.0f, 0.0f},          // distance
+                    {5.0f},                      // rotational speed
+                    glm::vec3{1.0f, 1.0f, 0.0f}, // rotational axis
+                    {0.3f, 0.3f, 0.3f},          // scale
+                    moon1_tmat, moon1_rmat,
+                    moon1_smat); // moon1: tmat, rmat, smat
+
+  moon->Update(moon1_tmat * moon1_rmat * moon1_smat);
 }
 
 void Graphics::Render() {
@@ -95,10 +134,30 @@ void Graphics::Render() {
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE,
                      glm::value_ptr(m_camera->GetView()));
 
-  // Render the object
+  std::stack<glm::mat4> matrixStack;
+  matrixStack.push(glm::mat4(1.0f)); // push I
+
+  // sun
+  matrixStack.push(matrixStack.top() * sun->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(m_obj->GetModel()));
-  m_obj->Render(m_vertPos, m_vertCol);
+                     glm::value_ptr(matrixStack.top()));
+  sun->Render(m_vertPos, m_vertCol);
+
+  // planet
+  matrixStack.push(matrixStack.top() * planet->GetModel());
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                     glm::value_ptr(matrixStack.top()));
+  planet->Render(m_vertPos, m_vertCol);
+
+  // moon 1
+  matrixStack.push(matrixStack.top() * moon->GetModel());
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                     glm::value_ptr(matrixStack.top()));
+  moon->Render(m_vertPos, m_vertCol);
+
+  matrixStack.pop(); // pop moon 1
+  matrixStack.pop(); // pop planet
+  matrixStack.pop(); // pop sun
 
   // Get any errors from OpenGL
   auto error = glGetError();
@@ -109,7 +168,7 @@ void Graphics::Render() {
   }
 }
 
-Object *Graphics::getInteractWith() { return m_obj; }
+Object *Graphics::getInteractWith() { return sun; }
 
 std::string Graphics::ErrorString(GLenum error) {
   if (error == GL_INVALID_ENUM) {
@@ -137,4 +196,18 @@ std::string Graphics::ErrorString(GLenum error) {
   } else {
     return "None";
   }
+}
+
+void Graphics::ComputeTransforms(double dt, std::vector<float> speed,
+                                 std::vector<float> dist,
+                                 std::vector<float> rotSpeed,
+                                 glm::vec3 rotVector, std::vector<float> scale,
+                                 glm::mat4 &tmat, glm::mat4 &rmat,
+                                 glm::mat4 &smat) {
+  tmat = glm::translate(glm::mat4(1.f),
+                        glm::vec3(cos(speed[0] * dt / 1000) * dist[0],
+                                  sin(speed[1] * dt / 1000) * dist[1],
+                                  sin(speed[2] * dt / 1000) * dist[2]));
+  rmat = glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt / 1000, rotVector);
+  smat = glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
 }

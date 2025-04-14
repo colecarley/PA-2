@@ -7,11 +7,13 @@ add_executable(graphics Code/main.cpp
                         Code/engine.cpp
                         Code/graphics.cpp
                         Code/object.cpp
+                        Code/pyramid.cpp
                         Code/shader.cpp
                         Code/shader.cpp
                         Code/window.cpp
                         Code/cube.cpp
                         Code/camera.h
+                        Code/pyramid.h
                         Code/cube.h
                         Code/engine.h
                         Code/graphics_headers.h

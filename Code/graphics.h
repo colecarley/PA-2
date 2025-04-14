@@ -8,7 +8,9 @@ using namespace std;
 #include "cube.h"
 #include "graphics_headers.h"
 #include "object.h"
+#include "pyramid.h"
 #include "shader.h"
+#include <vector>
 
 class Graphics {
 public:
@@ -20,7 +22,13 @@ public:
 
   Object *getInteractWith();
 
-  Object *getObj() { return m_obj; }
+  Object *getSun() { return sun; }
+  Object *getMoon() { return moon; }
+  Object *getPlanet() { return planet; }
+  void ComputeTransforms(double dt, std::vector<float> speed,
+                         std::vector<float> dist, std::vector<float> rotSpeed,
+                         glm::vec3 rotVector, std::vector<float> scale,
+                         glm::mat4 &tmat, glm::mat4 &rmat, glm::mat4 &smat);
 
 private:
   std::string ErrorString(GLenum error);
@@ -34,7 +42,9 @@ private:
   GLint m_vertPos;
   GLint m_vertCol;
 
-  Object *m_obj;
+  Object *sun;
+  Object *planet;
+  Object *moon;
 };
 
 #endif /* GRAPHICS_H */
