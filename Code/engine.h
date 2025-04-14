@@ -4,6 +4,7 @@
 #include "graphics.h"
 #include "window.h"
 #include <assert.h>
+#include <sys/time.h>
 
 /**
  * graphics engine used by the main function

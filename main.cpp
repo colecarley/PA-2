@@ -1,43 +1,23 @@
-// File: main.cpp
-
-#include "/opt/homebrew/Cellar/glew/2.2.0_1/include/GL/glew.h"
-#include "third_party/glfw/include/GLFW/glfw3.h" // GLFW helper library for window management
-#include <iostream>                              //for cout
+#include "Code/engine.h"
 
 int main(int argc, char **argv) {
-  // start GL context and O/S window using the GLFW helper library
-  if (!glfwInit()) {
-    std::cerr << "ERROR: could not start GLFW3" << std::endl;
+  // instantiate the engine, with window name w and h.
+  Engine *engine = new Engine("PA3", 800, 600);
+
+  // if initialization fails, print error message and clean up.
+  if (!engine->Initialize()) {
+    printf("The engine failed to start.\n");
+    delete engine;
+    engine = nullptr;
     return 1;
   }
 
-  // Setting window properties
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  // run the engine.
+  engine->Run();
 
-  // Actually create the window
-  GLFWwindow *window =
-      glfwCreateWindow(640, 480, "OpenGL Initialization Example", NULL, NULL);
-  if (!window) {
-    std::cerr << "ERROR: could not open window with GLFW3" << std::endl;
-    glfwTerminate();
-    return 1;
-  }
-  glfwMakeContextCurrent(window);
+  // delete the engine and set to null.
+  delete engine;
+  engine = nullptr;
 
-  // start GLEW extension handler
-  glewExperimental = GL_TRUE;
-  glewInit();
-
-  // get version info
-  const GLubyte *renderer = glGetString(GL_RENDERER); // get renderer string
-  const GLubyte *version = glGetString(GL_VERSION);   // version as a string
-  std::cout << "Renderer: " << renderer << std::endl;
-  std::cout << "OpenGL version supported " << version << std::endl;
-
-  // close GL context and any other GLFW resources
-  glfwTerminate();
   return 0;
 }
