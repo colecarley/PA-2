@@ -17,7 +17,7 @@ public:
   Graphics();
   ~Graphics();
   bool Initialize(int width, int height);
-  void Update(unsigned int dt, glm::vec3 speed);
+  void Update(double dt, glm::vec3 speed);
   void Render();
 
   Object *getInteractWith();
