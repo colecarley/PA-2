@@ -11,6 +11,7 @@ add_executable(graphics Code/main.cpp
                         Code/shader.cpp
                         Code/shader.cpp
                         Code/window.cpp
+                        Code/sphere.cpp
                         Code/cube.cpp
                         Code/camera.h
                         Code/pyramid.h
@@ -20,6 +21,7 @@ add_executable(graphics Code/main.cpp
                         Code/graphics.h
                         Code/object.h
                         Code/shader.h
+                        Code/sphere.h
                         Code/window.h
                         )
 

@@ -10,6 +10,7 @@ using namespace std;
 #include "object.h"
 #include "pyramid.h"
 #include "shader.h"
+#include "sphere.h"
 #include <vector>
 
 class Graphics {
@@ -44,7 +45,11 @@ private:
 
   Object *sun;
   Object *planet;
+  Object *planet2;
+  Object *planet3;
+  Object *planet4;
   Object *moon;
+  Object *moon2;
 };
 
 #endif /* GRAPHICS_H */

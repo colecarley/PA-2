@@ -5,9 +5,6 @@ Graphics::Graphics() {}
 Graphics::~Graphics() {}
 
 bool Graphics::Initialize(int width, int height) {
-
-  // For OpenGL 3
-
   // Init Camera
   m_camera = new Camera();
   if (!m_camera->Initialize(width, height)) {
@@ -66,14 +63,26 @@ bool Graphics::Initialize(int width, int height) {
   m_vertCol = m_shader->GetAttribLocation("v_color");
 
   // Create the object
-  sun = new Pyramid();
+  sun = new Sphere();
   sun->Initialize(m_vertPos, m_vertCol);
 
-  planet = new Cube();
+  planet = new Sphere();
   planet->Initialize(m_vertPos, m_vertCol);
 
-  moon = new Cube();
+  planet2 = new Sphere();
+  planet2->Initialize(m_vertPos, m_vertCol);
+
+  planet3 = new Sphere();
+  planet3->Initialize(m_vertPos, m_vertCol);
+
+  planet4 = new Sphere();
+  planet4->Initialize(m_vertPos, m_vertCol);
+
+  moon = new Sphere();
   moon->Initialize(m_vertPos, m_vertCol);
+
+  moon2 = new Sphere();
+  moon2->Initialize(m_vertPos, m_vertCol);
 
   // enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -83,83 +92,93 @@ bool Graphics::Initialize(int width, int height) {
 }
 
 void Graphics::Update(double dt, glm::vec3 speed) {
-  // update the Object.
-  glm::mat4 sun_tmat, sun_rmat, sun_smat;
-  ComputeTransforms(dt,                            // time
-                    {0.0f, 0.0f, 0.0f},            // speed
-                    {0.0f, 0.0f, 0.0f},            // distance
-                    {0.5f},                        // rotational speed
-                    glm::vec3{0.0f, 1.0f, 0.0f},   // rotational axis
-                    {2.0f, 2.0f, 2.0f},            // scale
-                    sun_tmat, sun_rmat, sun_smat); // sun: tmat, rmat, smat
+  glm::mat4 tmat, rmat, smat;
+  ComputeTransforms(dt, {0, 0, 0}, {0, 0, 0}, {0.5f}, glm::vec3{0, 1, 0},
+                    {2, 2, 2}, tmat, rmat, smat);
 
-  sun->Update(sun_tmat * sun_rmat * sun_smat);
+  sun->Update(tmat * rmat * smat);
 
-  glm::mat4 planet_tmat, planet_rmat, planet_smat;
-  ComputeTransforms(dt,                          // time
-                    {1.0f, 0.0f, 1.0f},          // speed
-                    {8.0f, 0.0f, 8.0f},          // distance
-                    {1.0f},                      // rotational speed
-                    glm::vec3{0.0f, 1.0f, 0.0f}, // rotational axis
-                    {0.75f, 0.75f, 0.75f},       // scale
-                    planet_tmat, planet_rmat,
-                    planet_smat); // planet: tmat, rmat, smat
+  ComputeTransforms(dt, {1, 0, 1}, {6, 0, 6}, {1}, glm::vec3{0, 1, 0},
+                    {0.5f, 0.5f, 0.5f}, tmat, rmat, smat);
 
-  planet->Update(planet_tmat * planet_rmat * planet_smat);
+  planet->Update(tmat * rmat * smat);
 
-  glm::mat4 moon1_tmat, moon1_rmat, moon1_smat;
-  ComputeTransforms(dt,                          // time
-                    {3.0f, 3.0f, 0.0f},          // speed
-                    {3.0f, 3.0f, 0.0f},          // distance
-                    {5.0f},                      // rotational speed
-                    glm::vec3{1.0f, 1.0f, 0.0f}, // rotational axis
-                    {0.3f, 0.3f, 0.3f},          // scale
-                    moon1_tmat, moon1_rmat,
-                    moon1_smat); // moon1: tmat, rmat, smat
+  ComputeTransforms(dt, {3, 0, 3}, {2, 0, 2}, {1}, glm::vec3{0, 1, 0},
+                    {0.4f, 0.4f, 0.4f}, tmat, rmat, smat);
 
-  moon->Update(moon1_tmat * moon1_rmat * moon1_smat);
+  planet2->Update(tmat * rmat * smat);
+
+  ComputeTransforms(dt, {2, 0, 2}, {8, 0, 8}, {1}, glm::vec3{0, 1, 0},
+                    {0.4f, 0.4f, 0.4f}, tmat, rmat, smat);
+
+  planet3->Update(tmat * rmat * smat);
+
+  ComputeTransforms(dt, {1, 0, 1}, {10, 0, 10}, {1}, glm::vec3{0, 1, 0},
+                    {0.8f, 0.8f, 0.8f}, tmat, rmat, smat);
+
+  planet4->Update(tmat * rmat * smat);
+
+  ComputeTransforms(dt, {3, 3, 0}, {2, 3, 2}, {2}, glm::vec3{1, 1, 0},
+                    {0.3f, 0.3f, 0.3f}, tmat, rmat, smat);
+
+  moon->Update(tmat * rmat * smat);
+
+  ComputeTransforms(dt, {1, 1, 0}, {2, 2, 0}, {5}, glm::vec3{1, 1, 0},
+                    {0.2f, 0.2f, 0.2f}, tmat, rmat, smat);
+
+  moon2->Update(tmat * rmat * smat);
 }
 
 void Graphics::Render() {
-  // clear the screen.
-  glClearColor(0.5, 0.2, 0.2, 1.0);
+  // clear the screen
+  glClearColor(0, 0, 0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // enable the shader with glUseProgram().
+  // Start the correct program
   m_shader->Enable();
 
-  // pass the projection and view to the shader.
+  // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE,
                      glm::value_ptr(m_camera->GetProjection()));
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE,
                      glm::value_ptr(m_camera->GetView()));
 
-  std::stack<glm::mat4> matrixStack;
-  matrixStack.push(glm::mat4(1.0f)); // push I
+  std::stack<glm::mat4> stack;
+  stack.push(glm::mat4(1.0f));
 
-  // sun
-  matrixStack.push(matrixStack.top() * sun->GetModel());
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(matrixStack.top()));
+  stack.push(stack.top() * sun->GetModel());
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
   sun->Render(m_vertPos, m_vertCol);
 
-  // planet
-  matrixStack.push(matrixStack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(matrixStack.top()));
+                     glm::value_ptr(stack.top() * planet2->GetModel()));
+  planet2->Render(m_vertPos, m_vertCol);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                     glm::value_ptr(stack.top() * planet3->GetModel()));
+  planet3->Render(m_vertPos, m_vertCol);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                     glm::value_ptr(stack.top() * planet4->GetModel()));
+  planet4->Render(m_vertPos, m_vertCol);
+
+  stack.push(stack.top() * planet->GetModel());
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
   planet->Render(m_vertPos, m_vertCol);
 
-  // moon 1
-  matrixStack.push(matrixStack.top() * moon->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(matrixStack.top()));
+                     glm::value_ptr(stack.top() * moon->GetModel()));
   moon->Render(m_vertPos, m_vertCol);
-  matrixStack.pop(); // pop moon 2
 
-  matrixStack.pop(); // pop planet
-  matrixStack.pop(); // pop sun
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                     glm::value_ptr(stack.top() * moon2->GetModel()));
+  moon->Render(m_vertPos, m_vertCol);
 
-  // record and print any OpenGL errors.
+  stack.pop();
+  stack.pop();
+  stack.pop();
+
+  // Get any errors from OpenGL
   auto error = glGetError();
   if (error != GL_NO_ERROR) {
     string val = ErrorString(error);
@@ -168,10 +187,9 @@ void Graphics::Render() {
   }
 }
 
+Object *Graphics::getInteractWith() { return sun; }
+
 std::string Graphics::ErrorString(GLenum error) {
-  /*
-   * depending on error, return a string which indicates to problem to the user.
-   */
   if (error == GL_INVALID_ENUM) {
     return "GL_INVALID_ENUM: An unacceptable value is specified for an "
            "enumerated argument.";
@@ -198,6 +216,7 @@ std::string Graphics::ErrorString(GLenum error) {
     return "None";
   }
 }
+
 void Graphics::ComputeTransforms(double dt, std::vector<float> speed,
                                  std::vector<float> dist,
                                  std::vector<float> rotSpeed,
