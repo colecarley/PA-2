@@ -3,6 +3,9 @@
 float toRadians(float degrees) { return degrees * (M_PI / 180); };
 
 Sphere::Sphere() { this->createVertices(); }
+Sphere::Sphere(glm::vec3 color) : color(color), valid_color(true) {
+  this->createVertices();
+}
 
 void Sphere::createVertices() {
   int prec = 10;
@@ -15,7 +18,8 @@ void Sphere::createVertices() {
           (float)sin(toRadians(j * 360.f / prec)) * (float)(abs(cos(asin(y))));
 
       auto vec = glm::vec3(x, y, z);
-      this->Vertices.push_back(Vertex(vec, vec));
+      this->Vertices.push_back(
+          Vertex(vec, this->valid_color ? this->color : vec));
     }
   }
 

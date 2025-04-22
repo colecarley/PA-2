@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include <memory>
 
 Graphics::Graphics() {}
 
@@ -63,26 +64,26 @@ bool Graphics::Initialize(int width, int height) {
   m_vertCol = m_shader->GetAttribLocation("v_color");
 
   // Create the object
-  sun = std::make_unique<Sphere>();
+  sun = std::make_unique<Sphere>(glm::vec3{1, 1, 0});
   sun->Initialize(m_vertPos, m_vertCol);
 
-  planet = std::make_unique<Sphere>();
+  planet = std::make_unique<Sphere>(glm::vec3{1, 0, 1});
   planet->Initialize(m_vertPos, m_vertCol);
 
-  planet2 = std::make_unique<Sphere>();
+  planet2 = std::make_unique<Sphere>(glm::vec3{0.5, 0.5, 0.5});
   planet2->Initialize(m_vertPos, m_vertCol);
 
-  planet4 = std::make_unique<Sphere>();
-  planet4->Initialize(m_vertPos, m_vertCol);
-
-  moon = std::make_unique<Sphere>();
-  moon->Initialize(m_vertPos, m_vertCol);
-
-  const std::string path = "/Users/colecarley/src/PA-2/Code/starship.obj";
-  planet3 = std::make_unique<Mesh>(path);
+  planet3 = std::make_unique<Sphere>(glm::vec3{0, 0.75, 0.75});
   planet3->Initialize(m_vertPos, m_vertCol);
 
-  moon2 = std::make_unique<Sphere>();
+  planet4 = std::make_unique<Sphere>(glm::vec3{1.00, 0.5, 0});
+  planet4->Initialize(m_vertPos, m_vertCol);
+
+  moon = std::make_unique<Sphere>(glm::vec3{1, 1, 1});
+  moon->Initialize(m_vertPos, m_vertCol);
+
+  moon2 =
+      std::make_unique<Mesh>("/Users/colecarley/src/PA-2/Code/starship.obj");
   moon2->Initialize(m_vertPos, m_vertCol);
 
   // enable depth testing
@@ -94,7 +95,7 @@ bool Graphics::Initialize(int width, int height) {
 
 void Graphics::Update(double dt, glm::vec3 speed) {
   glm::mat4 tmat, rmat, smat;
-  ComputeTransforms(dt, {0, 0, 0}, {0, 0, 0}, {0.5f}, glm::vec3{0, 1, 0},
+  ComputeTransforms(dt, {0, 0, 0}, {0, 0, 0}, {0.0f}, glm::vec3{0, 1, 0},
                     {2, 2, 2}, tmat, rmat, smat);
 
   sun->Update(tmat * rmat * smat);
@@ -124,9 +125,9 @@ void Graphics::Update(double dt, glm::vec3 speed) {
 
   moon->Update(tmat * rmat * smat);
 
-  ComputeTransforms(dt, {1, 1, 0}, {2, 2, 0}, {5}, glm::vec3{1, 1, 0},
-                    {0.2f, 0.2f, 0.2f}, tmat, rmat, smat);
-
+  ComputeTransforms(dt, {3, 3, 3}, {2, 2, 2}, {3}, glm::vec3{0, 0, 1},
+                    {0.1f, 0.1f, 0.1f}, tmat, rmat, smat);
+  rmat = glm::rotate(rmat, glm::radians(-90.0f), glm::vec3{0, 0, 1});
   moon2->Update(tmat * rmat * smat);
 }
 
@@ -159,9 +160,13 @@ void Graphics::Render() {
                      glm::value_ptr(stack.top() * planet3->GetModel()));
   planet3->Render(m_vertPos, m_vertCol);
 
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(stack.top() * planet4->GetModel()));
+  stack.push(stack.top() * planet4->GetModel());
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
   planet4->Render(m_vertPos, m_vertCol);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                     glm::value_ptr(stack.top() * moon2->GetModel()));
+  moon2->Render(m_vertPos, m_vertCol);
 
   stack.push(stack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
@@ -169,10 +174,6 @@ void Graphics::Render() {
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * moon->GetModel()));
-  moon->Render(m_vertPos, m_vertCol);
-
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(stack.top() * moon2->GetModel()));
   moon->Render(m_vertPos, m_vertCol);
 
   stack.pop();
