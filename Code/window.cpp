@@ -1,4 +1,5 @@
 #include "window.h"
+#include <memory>
 
 using namespace std;
 
@@ -13,21 +14,20 @@ Window::Window(const char *name, int *width, int *height) {
   }
 
   // Start OpenGL for GLFW
-
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-  // Create window
-  gWindow = glfwCreateWindow(*width, *height, name, NULL, NULL);
+  gWindow = std::unique_ptr<GLFWwindow, DestroyglfwWin>(
+      glfwCreateWindow(*width, *height, name, NULL, NULL));
 
-  glfwMakeContextCurrent(gWindow);
+  glfwMakeContextCurrent(gWindow.get());
 
   this->Initialize();
 }
 
 Window::~Window() {
 
-  glfwDestroyWindow(gWindow);
+  glfwDestroyWindow(gWindow.get());
   gWindow = NULL;
   glfwTerminate();
 }
@@ -48,4 +48,4 @@ bool Window::Initialize() {
   return true;
 }
 
-void Window::Swap() { glfwSwapBuffers(gWindow); }
+void Window::Swap() { glfwSwapBuffers(gWindow.get()); }

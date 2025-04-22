@@ -6,14 +6,14 @@ Graphics::~Graphics() {}
 
 bool Graphics::Initialize(int width, int height) {
   // Init Camera
-  m_camera = new Camera();
+  m_camera = std::make_unique<Camera>();
   if (!m_camera->Initialize(width, height)) {
     printf("Camera Failed to Initialize\n");
     return false;
   }
 
   // Set up the shaders
-  m_shader = new Shader();
+  m_shader = std::make_unique<Shader>();
   if (!m_shader->Initialize()) {
     printf("Shader Failed to Initialize\n");
     return false;
@@ -63,25 +63,26 @@ bool Graphics::Initialize(int width, int height) {
   m_vertCol = m_shader->GetAttribLocation("v_color");
 
   // Create the object
-  sun = new Sphere();
+  sun = std::make_unique<Sphere>();
   sun->Initialize(m_vertPos, m_vertCol);
 
-  planet = new Sphere();
+  planet = std::make_unique<Sphere>();
   planet->Initialize(m_vertPos, m_vertCol);
 
-  planet2 = new Sphere();
+  planet2 = std::make_unique<Sphere>();
   planet2->Initialize(m_vertPos, m_vertCol);
 
-  planet3 = new Sphere();
-  planet3->Initialize(m_vertPos, m_vertCol);
-
-  planet4 = new Sphere();
+  planet4 = std::make_unique<Sphere>();
   planet4->Initialize(m_vertPos, m_vertCol);
 
-  moon = new Sphere();
+  moon = std::make_unique<Sphere>();
   moon->Initialize(m_vertPos, m_vertCol);
 
-  moon2 = new Sphere();
+  const std::string path = "/Users/colecarley/src/PA-2/Code/starship.obj";
+  planet3 = std::make_unique<Mesh>(path);
+  planet3->Initialize(m_vertPos, m_vertCol);
+
+  moon2 = std::make_unique<Sphere>();
   moon2->Initialize(m_vertPos, m_vertCol);
 
   // enable depth testing
@@ -181,13 +182,13 @@ void Graphics::Render() {
   // Get any errors from OpenGL
   auto error = glGetError();
   if (error != GL_NO_ERROR) {
-    string val = ErrorString(error);
+    std::string val = ErrorString(error);
     std::cout << "Error initializing OpenGL! " << error << ", " << val
               << std::endl;
   }
 }
 
-Object *Graphics::getInteractWith() { return sun; }
+std::unique_ptr<Object> &Graphics::getInteractWith() { return sun; }
 
 std::string Graphics::ErrorString(GLenum error) {
   if (error == GL_INVALID_ENUM) {

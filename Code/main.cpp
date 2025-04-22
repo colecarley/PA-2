@@ -1,26 +1,16 @@
 #include <iostream>
 
 #include "engine.h"
+#include "mesh.h"
 
 int main(int argc, char **argv) {
-  // Start an engine and run it then cleanup after
+  Engine engine = Engine("Tutorial Window Name", 800, 600);
 
-  // Create the engine
-  Engine *engine = new Engine("Tutorial Window Name", 800, 600);
-
-  // Engine initialization
-  if (!engine->Initialize()) {
-    delete engine;
-    engine = NULL;
+  if (!engine.Initialize()) {
     return 1;
   }
 
-  // Run the engine
-  engine->Run();
-
-  // Destroy the engine
-  delete engine;
-  engine = NULL;
+  engine.Run();
 
   return 0;
 }

@@ -1,6 +1,4 @@
-#ifndef PYRAMID_H
-#define PYRAMID_H
-
+#pragma once
 #include "object.h"
 
 class Pyramid : public Object {
@@ -10,5 +8,3 @@ public:
 private:
   void createVertices() override;
 };
-
-#endif /* PYRAMID_H */

@@ -1,5 +1,4 @@
-#ifndef GRAPHICS_HEADERS_H
-#define GRAPHICS_HEADERS_H
+#pragma once
 
 #include <iostream>
 
@@ -26,5 +25,3 @@ struct Vertex {
 
   Vertex(glm::vec3 v, glm::vec3 c) : vertex(v), color(c) {}
 };
-
-#endif /* GRAPHICS_HEADERS_H */

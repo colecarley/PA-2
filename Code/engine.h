@@ -1,5 +1,4 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#pragma once
 
 #include "graphics.h"
 #include "window.h"
@@ -19,13 +18,13 @@ public:
   void ProcessInput();
   unsigned int getDT();
   long long GetCurrentTimeMillis();
-  void Display(GLFWwindow *, double);
+  void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
 
   void setSpeed(glm::vec3 spd) { speed = spd; };
 
 private:
   // Window related variables
-  Window *m_window;
+  std::unique_ptr<Window> m_window;
   const char *m_WINDOW_NAME;
   int m_WINDOW_WIDTH;
   int m_WINDOW_HEIGHT;
@@ -33,9 +32,7 @@ private:
 
   glm::vec3 speed = glm::vec3(0.f, 0.f, 0.f);
 
-  Graphics *m_graphics;
+  std::unique_ptr<Graphics> m_graphics;
 
   bool m_running;
 };
-
-#endif // ENGINE_H

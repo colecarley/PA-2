@@ -1,5 +1,7 @@
 
 #include "engine.h"
+#include "window.h"
+#include <memory>
 
 Engine::Engine(const char *name, int width, int height) {
   m_WINDOW_NAME = name;
@@ -7,16 +9,12 @@ Engine::Engine(const char *name, int width, int height) {
   m_WINDOW_HEIGHT = height;
 }
 
-Engine::~Engine() {
-  delete m_window;
-  delete m_graphics;
-  m_window = NULL;
-  m_graphics = NULL;
-}
+Engine::~Engine() {}
 
 bool Engine::Initialize() {
   // Start a window
-  m_window = new Window(m_WINDOW_NAME, &m_WINDOW_WIDTH, &m_WINDOW_HEIGHT);
+  m_window = std::make_unique<Window>(m_WINDOW_NAME, &m_WINDOW_WIDTH,
+                                      &m_WINDOW_HEIGHT);
   if (!m_window->Initialize()) {
 
     printf("The window failed to initialize.\n");
@@ -24,7 +22,7 @@ bool Engine::Initialize() {
   }
 
   // Start the graphics
-  m_graphics = new Graphics();
+  m_graphics = std::make_unique<Graphics>();
   if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT)) {
     printf("The graphics failed to initialize.\n");
     return false;
@@ -37,7 +35,7 @@ bool Engine::Initialize() {
 void Engine::Run() {
   m_running = true;
 
-  while (!glfwWindowShouldClose(m_window->getWindow())) {
+  while (!glfwWindowShouldClose(m_window->getWindow().get())) {
     ProcessInput();
     Display(m_window->getWindow(), glfwGetTime());
     glfwPollEvents();
@@ -46,8 +44,8 @@ void Engine::Run() {
 }
 
 void Engine::ProcessInput() {
-  if (glfwGetKey(m_window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(m_window->getWindow(), true);
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    glfwSetWindowShouldClose(m_window->getWindow().get(), true);
 }
 
 unsigned int Engine::getDT() {
@@ -67,7 +65,8 @@ long long Engine::GetCurrentTimeMillis() {
   return (long long)glfwGetTime();
 }
 
-void Engine::Display(GLFWwindow *window, double time) {
+void Engine::Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &window,
+                     double time) {
   // render the objects
   m_graphics->Render();
 

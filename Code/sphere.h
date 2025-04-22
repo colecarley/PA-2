@@ -1,5 +1,4 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#pragma once
 
 #include "object.h"
 
@@ -10,5 +9,3 @@ public:
 private:
   void createVertices() override;
 };
-
-#endif /* SPHERE_H */

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "object.h"
 
 class Cube : public Object {

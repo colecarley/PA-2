@@ -1,13 +1,11 @@
-#ifndef OBJECT_H
-#define OBJECT_H
-
+#pragma once
 #include "graphics_headers.h"
 #include <vector>
 
 class Object {
 public:
   Object() = default;
-  ~Object();
+  virtual ~Object();
   void Initialize(GLint posAttribLoc, GLint colAttribLoc);
   void Update(glm::mat4 model_matrix);
   void Render(GLint posAttribLoc, GLint colAttribLoc);
@@ -26,5 +24,3 @@ protected:
   glm::vec3 m_speed = glm::vec3(0., 0., 0.);
   float angle;
 };
-
-#endif /* OBJECT_H */

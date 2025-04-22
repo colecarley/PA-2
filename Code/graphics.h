@@ -1,16 +1,16 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#pragma once
 
 #include <iostream>
-using namespace std;
 
 #include "camera.h"
 #include "cube.h"
 #include "graphics_headers.h"
+#include "mesh.h"
 #include "object.h"
 #include "pyramid.h"
 #include "shader.h"
 #include "sphere.h"
+#include <memory>
 #include <vector>
 
 class Graphics {
@@ -21,11 +21,11 @@ public:
   void Update(double dt, glm::vec3 speed);
   void Render();
 
-  Object *getInteractWith();
+  std::unique_ptr<Object> &getInteractWith();
 
-  Object *getSun() { return sun; }
-  Object *getMoon() { return moon; }
-  Object *getPlanet() { return planet; }
+  std::unique_ptr<Object> &getSun() { return sun; }
+  std::unique_ptr<Object> &getMoon() { return moon; }
+  std::unique_ptr<Object> &getPlanet() { return planet; }
   void ComputeTransforms(double dt, std::vector<float> speed,
                          std::vector<float> dist, std::vector<float> rotSpeed,
                          glm::vec3 rotVector, std::vector<float> scale,
@@ -34,8 +34,8 @@ public:
 private:
   std::string ErrorString(GLenum error);
 
-  Camera *m_camera;
-  Shader *m_shader;
+  std::unique_ptr<Camera> m_camera;
+  std::unique_ptr<Shader> m_shader;
 
   GLint m_projectionMatrix;
   GLint m_viewMatrix;
@@ -43,13 +43,11 @@ private:
   GLint m_vertPos;
   GLint m_vertCol;
 
-  Object *sun;
-  Object *planet;
-  Object *planet2;
-  Object *planet3;
-  Object *planet4;
-  Object *moon;
-  Object *moon2;
+  std::unique_ptr<Object> sun;
+  std::unique_ptr<Object> planet;
+  std::unique_ptr<Object> planet2;
+  std::unique_ptr<Object> planet3;
+  std::unique_ptr<Object> planet4;
+  std::unique_ptr<Object> moon;
+  std::unique_ptr<Object> moon2;
 };
-
-#endif /* GRAPHICS_H */

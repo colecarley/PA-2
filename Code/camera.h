@@ -1,5 +1,4 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include "graphics_headers.h"
 
@@ -15,5 +14,3 @@ private:
   glm::mat4 projection;
   glm::mat4 view;
 };
-
-#endif /* CAMERA_H */

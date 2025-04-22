@@ -1,10 +1,13 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include </opt/homebrew/opt/glew/include/GL/glew.h>
 #include </opt/homebrew/opt/glfw/include/GLFW/glfw3.h>
 #include <iostream>
 #include <string>
+
+struct DestroyglfwWin {
+  void operator()(GLFWwindow *ptr) { glfwDestroyWindow(ptr); }
+};
 
 class Window {
 public:
@@ -13,10 +16,8 @@ public:
   bool Initialize();
   void Swap();
 
-  GLFWwindow *getWindow() { return gWindow; };
+  std::unique_ptr<GLFWwindow, DestroyglfwWin> &getWindow() { return gWindow; };
 
 private:
-  GLFWwindow *gWindow;
+  std::unique_ptr<GLFWwindow, DestroyglfwWin> gWindow;
 };
-
-#endif /* WINDOW_H */
