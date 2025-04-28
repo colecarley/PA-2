@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include <memory>
+#include <stack>
 
 Graphics::Graphics() {}
 
