@@ -32,6 +32,17 @@ bool Camera::Initialize(int w, int h) {
   return true;
 }
 
+void Camera::update_view(float pitch, float yaw) {
+  glm::vec3 direction;
+  direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+  direction.y = sin(glm::radians(pitch));
+  direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+  this->camera_front = glm::normalize(direction);
+
+  this->view = glm::lookAt(camera_pos, this->camera_pos + this->camera_front,
+                           this->camera_up);
+}
+
 glm::mat4 Camera::GetProjection() { return projection; }
 
 glm::mat4 Camera::GetView() { return view; }

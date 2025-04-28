@@ -44,8 +44,52 @@ void Engine::Run() {
 }
 
 void Engine::ProcessInput() {
-  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+  double xpos, ypos;
+  glfwGetCursorPos(this->m_window->getWindow().get(), &xpos, &ypos);
+
+  double offset_x = xpos - last_x;
+  double offset_y = ypos - last_y;
+  this->last_x = xpos;
+  this->last_y = ypos;
+
+  float sensitivity = 0.1f;
+  offset_x *= sensitivity;
+  offset_y *= sensitivity;
+
+  this->yaw += offset_x;
+  this->pitch += offset_y;
+
+  if (this->pitch > 89.0f) {
+    this->pitch = 89.0f;
+  } else if (this->pitch < -89.0f) {
+    this->pitch = -89.0f;
+  }
+
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(m_window->getWindow().get(), true);
+  }
+
+  std::unique_ptr<Camera> &camera = this->m_graphics->getCamera();
+  float speed = 0.5;
+
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
+    camera->update_pos(speed * camera->get_camera_front());
+  }
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
+    camera->update_pos(-speed * camera->get_camera_front());
+  }
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
+    camera->update_pos(speed *
+                       glm::normalize(glm::cross(camera->get_camera_front(),
+                                                 camera->get_camera_up())));
+  }
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D) == GLFW_PRESS) {
+    camera->update_pos(-speed *
+                       glm::normalize(glm::cross(camera->get_camera_front(),
+                                                 camera->get_camera_up())));
+  }
+
+  this->m_graphics->getCamera()->update_view(pitch, yaw);
 }
 
 unsigned int Engine::getDT() {

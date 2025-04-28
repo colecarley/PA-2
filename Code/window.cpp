@@ -25,12 +25,7 @@ Window::Window(const char *name, int *width, int *height) {
   this->Initialize();
 }
 
-Window::~Window() {
-
-  glfwDestroyWindow(gWindow.get());
-  gWindow = NULL;
-  glfwTerminate();
-}
+Window::~Window() { glfwTerminate(); }
 
 bool Window::Initialize() {
   // Start SDL

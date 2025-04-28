@@ -19,11 +19,14 @@ public:
   unsigned int getDT();
   long long GetCurrentTimeMillis();
   void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
-
   void setSpeed(glm::vec3 spd) { speed = spd; };
 
 private:
   // Window related variables
+  int last_x = 0;
+  int last_y = 0;
+  float yaw = 0;
+  float pitch = 0;
   std::unique_ptr<Window> m_window;
   const char *m_WINDOW_NAME;
   int m_WINDOW_WIDTH;

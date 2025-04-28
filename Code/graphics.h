@@ -22,10 +22,10 @@ public:
   void Render();
 
   std::unique_ptr<Object> &getInteractWith();
-
   std::unique_ptr<Object> &getSun() { return sun; }
   std::unique_ptr<Object> &getMoon() { return moon; }
   std::unique_ptr<Object> &getPlanet() { return planet; }
+  std::unique_ptr<Camera> &getCamera() { return m_camera; }
   void ComputeTransforms(double dt, std::vector<float> speed,
                          std::vector<float> dist, std::vector<float> rotSpeed,
                          glm::vec3 rotVector, std::vector<float> scale,
