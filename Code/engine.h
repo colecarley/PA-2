@@ -23,15 +23,16 @@ public:
 
 private:
   // Window related variables
-  int last_x = 0;
-  int last_y = 0;
-  float yaw = 0;
-  float pitch = 0;
+
   std::unique_ptr<Window> m_window;
   const char *m_WINDOW_NAME;
   int m_WINDOW_WIDTH;
   int m_WINDOW_HEIGHT;
   bool m_FULLSCREEN;
+  int last_x;
+  int last_y;
+  float yaw = 0;
+  float pitch = 0;
 
   glm::vec3 speed = glm::vec3(0.f, 0.f, 0.f);
 
