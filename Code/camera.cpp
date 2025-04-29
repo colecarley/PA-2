@@ -13,9 +13,9 @@ bool Camera::Initialize(int w, int h) {
 
   // TO DO: Make the camera to be placed at location (10, 12, -20), point at
   // origin, and the right-handed Y-up coordinate
-  view = glm::lookAt(glm::vec3(20, 20, 40.0),   // Eye Position
-                     glm::vec3(0.0, 0.0, 0.0),  // Focus point
-                     glm::vec3(0.0, 1.0, 0.0)); // Positive Y is up
+  view = glm::lookAt(this->camera_pos,   // Eye Position
+                     this->camera_front, // Focus point
+                     this->camera_up);   // Positive Y is up
 
   projection = glm::perspective(
       glm::radians(60.f),  // the FoV typically 90 degrees is good which is what
@@ -39,8 +39,8 @@ void Camera::update_view(float pitch, float yaw) {
   direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
   this->camera_front = glm::normalize(direction);
 
-  this->view = glm::lookAt(camera_pos, this->camera_pos + this->camera_front,
-                           this->camera_up);
+  this->view = glm::lookAt(
+      this->camera_pos, this->camera_pos + this->camera_front, this->camera_up);
 }
 
 glm::mat4 Camera::GetProjection() { return projection; }

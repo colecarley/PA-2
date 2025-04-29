@@ -29,10 +29,11 @@ private:
   int m_WINDOW_WIDTH;
   int m_WINDOW_HEIGHT;
   bool m_FULLSCREEN;
-  int last_x;
-  int last_y;
+  float last_x;
+  float last_y;
   float yaw = 0;
-  float pitch = 0;
+  bool first_mouse = true;
+  float pitch = M_PI;
 
   glm::vec3 speed = glm::vec3(0.f, 0.f, 0.f);
 

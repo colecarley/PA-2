@@ -49,10 +49,17 @@ void Engine::ProcessInput() {
   double xpos, ypos;
   glfwGetCursorPos(this->m_window->getWindow().get(), &xpos, &ypos);
 
-  double offset_x = xpos - last_x;
-  double offset_y = ypos - last_y;
-  this->last_x = xpos;
-  this->last_y = ypos;
+  float offset_x = 0;
+  float offset_y = 0;
+
+  if (!first_mouse) {
+    offset_x = xpos - last_x;
+    offset_y = ypos - last_y;
+    this->last_x = xpos;
+    this->last_y = ypos;
+  }
+
+  this->first_mouse = false;
 
   float sensitivity = 0.1f;
   offset_x *= sensitivity;

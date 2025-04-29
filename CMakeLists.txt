@@ -29,6 +29,8 @@ add_executable(graphics Code/main.cpp
                         Code/mesh.h
                         )
 
+target_compile_options(graphics PUBLIC -Wall -Wpedantic)
+
 target_include_directories(graphics 
 PRIVATE /opt/homebrew/opt/glfw/include 
 PRIVATE /opt/homebrew/opt/glew/include
