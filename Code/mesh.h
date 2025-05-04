@@ -1,11 +1,7 @@
 #pragma once
 
-#include "graphics_headers.h"
 #include "object.h"
 #include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 class Mesh : public Object {

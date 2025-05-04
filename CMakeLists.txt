@@ -9,16 +9,12 @@ add_executable(graphics Code/main.cpp
                         Code/engine.cpp
                         Code/graphics.cpp
                         Code/object.cpp
-                        Code/pyramid.cpp
                         Code/shader.cpp
                         Code/shader.cpp
                         Code/window.cpp
                         Code/sphere.cpp
-                        Code/cube.cpp
                         Code/camera.h
                         Code/mesh.cpp
-                        Code/pyramid.h
-                        Code/cube.h
                         Code/engine.h
                         Code/graphics_headers.h
                         Code/graphics.h
@@ -39,9 +35,7 @@ PRIVATE /opt/homebrew/opt/glm/include)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(assimp REQUIRED)
 
 target_link_libraries(graphics glfw)
 target_link_libraries(graphics GLEW::glew)
 target_link_libraries(graphics OpenGL::GL)
-target_link_libraries(graphics assimp::assimp)

@@ -7,8 +7,8 @@ Engine::Engine(const char *name, int width, int height) {
   m_WINDOW_NAME = name;
   m_WINDOW_WIDTH = width;
   m_WINDOW_HEIGHT = height;
-  this->last_x = width / 2;
-  this->last_y = height / 2;
+  this->last_x = width / 2.0;
+  this->last_y = height / 2.0;
 }
 
 Engine::~Engine() {}
@@ -82,10 +82,10 @@ void Engine::ProcessInput() {
   float speed = 0.5;
 
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
-    camera->update_pos(-speed * glm::vec3(0, 1, 0));
+    camera->update_pos(-speed * glm::vec3(0, 0, 1));
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
-    camera->update_pos(speed * glm::vec3(0, 1, 0));
+    camera->update_pos(speed * glm::vec3(0, 0, 1));
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
     camera->update_pos(speed *

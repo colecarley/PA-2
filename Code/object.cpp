@@ -1,7 +1,6 @@
 #include "object.h"
 
-void Object::Initialize(GLint posAttribLoc, GLint colAttribLoc) {
-
+void Object::Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc) {
   // set up your VAO
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -12,8 +11,10 @@ void Object::Initialize(GLint posAttribLoc, GLint colAttribLoc) {
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0],
                GL_STATIC_DRAW);
   glVertexAttribPointer(posAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-  glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                        (void *)offsetof(Vertex, color));
+  glVertexAttribPointer(vertAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                        (void *)offsetof(Vertex, normal));
+	glVertexAttribPointer(textAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                        (void *)offsetof(Vertex, texture));
 
   // setting the Index VBO
   glGenBuffers(1, &IB);
@@ -55,7 +56,7 @@ glm::mat4 Object::GetModel() {
   return model;
 }
 
-void Object::Render(GLint posAttribLoc, GLint colAttribLoc) {
+void Object::Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc) {
   // bind VAO
   glBindVertexArray(vao);
 
@@ -67,14 +68,16 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc) {
   // this is the poistion attrib in the vertex shader
   glEnableVertexAttribArray(posAttribLoc);
   // this is the color attribe in the vertex shader
-  glEnableVertexAttribArray(colAttribLoc);
+  glEnableVertexAttribArray(vertAttribLoc);
+	glEnableVertexAttribArray(textAttribLoc);
 
   // draw call to OpenGL
   glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
 
   // disable the vertex attributes
   glDisableVertexAttribArray(posAttribLoc);
-  glDisableVertexAttribArray(colAttribLoc);
+  glDisableVertexAttribArray(vertAttribLoc);
+  glDisableVertexAttribArray(textAttribLoc);
 
   // unbind VBO(s) and ElementBuffer(s)
   glBindBuffer(GL_ARRAY_BUFFER, 0);

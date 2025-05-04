@@ -6,9 +6,9 @@ class Object {
 public:
   Object() = default;
   virtual ~Object();
-  void Initialize(GLint posAttribLoc, GLint colAttribLoc);
+  void Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc);
   void Update(glm::mat4 model_matrix);
-  void Render(GLint posAttribLoc, GLint colAttribLoc);
+  void Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc);
   glm::mat4 GetModel();
   void setSpeed(glm::vec3 spd) { m_speed = spd; }
   void setAngle(float theta) { angle = theta; }

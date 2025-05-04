@@ -1,15 +1,9 @@
 #pragma once
 
-#include <iostream>
-
 #include "camera.h"
-#include "cube.h"
 #include "graphics_headers.h"
-#include "mesh.h"
 #include "object.h"
-#include "pyramid.h"
 #include "shader.h"
-#include "sphere.h"
 #include <memory>
 #include <vector>
 
@@ -41,13 +35,11 @@ private:
   GLint m_viewMatrix;
   GLint m_modelMatrix;
   GLint m_vertPos;
-  GLint m_vertCol;
+  GLint m_vertNorm;
+  GLint m_vertText;
 
   std::unique_ptr<Object> sun;
   std::unique_ptr<Object> planet;
-  std::unique_ptr<Object> planet2;
-  std::unique_ptr<Object> planet3;
-  std::unique_ptr<Object> planet4;
   std::unique_ptr<Object> moon;
-  std::unique_ptr<Object> moon2;
+  std::unique_ptr<Object> ship;
 };

@@ -1,4 +1,6 @@
 #include "mesh.h"
+#include <sstream>
+#include <fstream>
 
 void Mesh::createVertices() {
   float x, y, z;
@@ -18,7 +20,7 @@ void Mesh::createVertices() {
       ss >> y;
       ss >> z;
       this->Indices.push_back(this->Vertices.size());
-      this->Vertices.push_back(Vertex(glm::vec3(x, y, z), glm::vec3(x, y, z)));
+      this->Vertices.push_back(Vertex(glm::vec3(x, y, z), glm::vec3(x, y, z), glm::vec2(0.0)));
     }
   }
 }
