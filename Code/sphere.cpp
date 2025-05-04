@@ -1,7 +1,9 @@
 #include "sphere.h"
+#include "texture.h"
 
-
-Sphere::Sphere() { this->createVertices(); }
+Sphere::Sphere(const std::string texture_filename) { 
+	this->texture = std::make_unique<Texture>(texture_filename);
+	this->createVertices(); }
 
 void Sphere::createVertices() {
   int prec = 10;
@@ -14,7 +16,7 @@ void Sphere::createVertices() {
           (float)sin(glm::radians(j * 360.f / prec)) * (float)(abs(cos(asin(y))));
 
       auto vec = glm::vec3(x, y, z);
-      this->Vertices.push_back(Vertex(vec, vec, glm::vec2(0)));
+      this->Vertices.push_back(Vertex(vec, vec, glm::vec2((float)j / prec, (float)i / prec)));
     }
   }
 

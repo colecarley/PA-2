@@ -1,30 +1,37 @@
 #include "mesh.h"
-#include <sstream>
-#include <fstream>
+#include <assimp/postprocess.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
 
 void Mesh::createVertices() {
-  float x, y, z;
-  std::string content;
-  std::ifstream file_stream(file_path, std::ios::in);
-  if (!file_stream) {
-    std::cerr << "Failed: Model .obj not found.\n";
-    exit(EXIT_FAILURE);
-  }
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(mesh_file_path, aiProcess_Triangulate);
+	
+    aiMesh* mesh = scene->mMeshes[0];
 
-  std::string line = "";
-  while (!file_stream.eof()) {
-    getline(file_stream, line);
-    if (!line.compare(0, 2, "v ")) {
-      std::stringstream ss(line.erase(0, 2));
-      ss >> x;
-      ss >> y;
-      ss >> z;
-      this->Indices.push_back(this->Vertices.size());
-      this->Vertices.push_back(Vertex(glm::vec3(x, y, z), glm::vec3(x, y, z), glm::vec2(0.0)));
-    }
-  }
+	// Process vertices
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		aiVector3D pos = mesh->mVertices[i];
+		aiVector3D norm = mesh->HasNormals() ? mesh->mNormals[i] : aiVector3D(0.0f, 0.0f, 0.0f);
+		aiVector3D texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f);
+
+		Vertices.push_back(Vertex(
+			glm::vec3(pos.x, pos.y, pos.z),
+			glm::vec3(norm.x, norm.y, norm.z),
+			glm::vec2(texCoord.x, texCoord.y)
+		));
+	}
+
+	// Process indices
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace face = mesh->mFaces[i];
+		for (int j = 0; j < face.mNumIndices; j++) {
+			Indices.push_back(face.mIndices[j]);
+		}
+	}
 }
 
-Mesh::Mesh(const std::string &file_path) : file_path(file_path) {
+Mesh::Mesh(const std::string &mesh_file_path, const std::string& texture_file_path) : mesh_file_path(mesh_file_path) {
+	this->texture = std::make_unique<Texture>(texture_file_path);
   this->createVertices();
 }

@@ -1,4 +1,5 @@
 #include "object.h"
+#include "graphics_headers.h"
 
 void Object::Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc) {
   // set up your VAO
@@ -56,7 +57,7 @@ glm::mat4 Object::GetModel() {
   return model;
 }
 
-void Object::Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc) {
+void Object::Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc, GLint samplerAttribloc) {
   // bind VAO
   glBindVertexArray(vao);
 
@@ -67,9 +68,12 @@ void Object::Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc
   // enable the vertex attribute arrays
   // this is the poistion attrib in the vertex shader
   glEnableVertexAttribArray(posAttribLoc);
-  // this is the color attribe in the vertex shader
   glEnableVertexAttribArray(vertAttribLoc);
 	glEnableVertexAttribArray(textAttribLoc);
+	
+	glUniform1i(samplerAttribloc, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, this->texture->get_texture_id());
 
   // draw call to OpenGL
   glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);

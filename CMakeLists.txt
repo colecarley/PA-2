@@ -6,36 +6,40 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(graphics Code/main.cpp 
                         Code/camera.cpp
-                        Code/engine.cpp
-                        Code/graphics.cpp
-                        Code/object.cpp
-                        Code/shader.cpp
-                        Code/shader.cpp
-                        Code/window.cpp
-                        Code/sphere.cpp
                         Code/camera.h
-                        Code/mesh.cpp
+                        Code/engine.cpp
                         Code/engine.h
-                        Code/graphics_headers.h
+                        Code/graphics.cpp
                         Code/graphics.h
-                        Code/object.h
-                        Code/shader.h
-                        Code/sphere.h
-                        Code/window.h
+                        Code/graphics_headers.h
+                        Code/mesh.cpp
                         Code/mesh.h
+                        Code/object.cpp
+                        Code/object.h
+                        Code/shader.cpp
+                        Code/shader.h
+                        Code/sphere.cpp
+                        Code/sphere.h
+												Code/texture.cpp
+												Code/texture.h
+                        Code/window.cpp
+                        Code/window.h
                         )
 
-target_compile_options(graphics PUBLIC -Wall -Wpedantic)
-
-target_include_directories(graphics 
-PRIVATE /opt/homebrew/opt/glfw/include 
-PRIVATE /opt/homebrew/opt/glew/include
-PRIVATE /opt/homebrew/opt/glm/include)
+												target_compile_options(graphics PUBLIC -Wall -Wpedantic) 
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(soil2 CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
-target_link_libraries(graphics glfw)
-target_link_libraries(graphics GLEW::glew)
-target_link_libraries(graphics OpenGL::GL)
+target_link_libraries(graphics 
+	glfw
+	GLEW::glew
+	OpenGL::GL
+	assimp::assimp
+	soil2::soil2
+	"-framework CoreFoundation"
+)
+

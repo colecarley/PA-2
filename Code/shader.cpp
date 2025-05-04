@@ -37,9 +37,9 @@ bool Shader::AddShader(GLenum ShaderType) {
       layout (location = 1) in vec3 v_normal; \
       layout (location = 2) in vec2 v_texture; \
       \
-      out vec3 color; \
 			out vec3 norm; \
 			out vec2 textCoord; \
+			out vec3 color; \
       \
       uniform mat4 projectionMatrix; \
       uniform mat4 viewMatrix; \
@@ -57,15 +57,16 @@ bool Shader::AddShader(GLenum ShaderType) {
   } else if (ShaderType == GL_FRAGMENT_SHADER) {
     s = "#version 410\n \
       \
-      layout (location = 0) in vec3 color; \
-      layout (location = 1) in vec2 textCoord; \
-			layout (location = 2) in vec3 norm; \
+      layout (location = 0) in vec2 textCoord; \
+			layout (location = 1) in vec3 norm; \
+			layout (location = 3) in vec3 color; \
+			uniform sampler2D samp;\
       \
       out vec4 frag_color; \
       \
       void main(void) \
       { \
-        frag_color = vec4(color.rgb, 1.0); \
+        frag_color = texture(samp, textCoord); \
       } \
     ";
   }

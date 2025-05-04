@@ -1,6 +1,8 @@
 #pragma once
 #include "graphics_headers.h"
 #include <vector>
+#include "texture.h"
+#include <memory>
 
 class Object {
 public:
@@ -8,7 +10,7 @@ public:
   virtual ~Object();
   void Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc);
   void Update(glm::mat4 model_matrix);
-  void Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc);
+  void Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc, GLint samplerAttribLoc);
   glm::mat4 GetModel();
   void setSpeed(glm::vec3 spd) { m_speed = spd; }
   void setAngle(float theta) { angle = theta; }
@@ -23,4 +25,5 @@ protected:
   GLuint IB;
   glm::vec3 m_speed = glm::vec3(0., 0., 0.);
   float angle;
+	std::unique_ptr<Texture> texture;
 };

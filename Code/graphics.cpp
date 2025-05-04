@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include <memory>
 #include <stack>
+#include "graphics_headers.h"
 #include "mesh.h"
 #include "sphere.h"
 
@@ -61,23 +62,29 @@ bool Graphics::Initialize(int width, int height) {
     return false;
   }
 
+	m_samplerLoc = m_shader->GetUniformLocation("samp");
+	if (m_samplerLoc == INVALID_UNIFORM_LOCATION) {
+		std::cerr << "m_samplerLoc not found\n";
+		return false;
+	}
+
   // Find where vertex attributes are in shader
   m_vertPos = m_shader->GetAttribLocation("v_position");
   m_vertNorm = m_shader->GetAttribLocation("v_normal");
 	m_vertText = m_shader->GetAttribLocation("v_texture");
 
   // Create the object
-  sun = std::make_unique<Sphere>();
+  sun = std::make_unique<Sphere>("/Users/colecarley/src/PA-2/assets/2k_sun.jpg");
   sun->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  planet = std::make_unique<Sphere>();
+  planet = std::make_unique<Sphere>("/Users/colecarley/src/PA-2/assets/2k_earth_daymap.jpg");
   planet->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  moon = std::make_unique<Sphere>();
+  moon = std::make_unique<Sphere>("/Users/colecarley/src/PA-2/assets/2k_moon.jpg");
   moon->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
   ship =
-      std::make_unique<Mesh>("/Users/colecarley/src/PA-2/Code/starship.obj");
+      std::make_unique<Mesh>("/Users/colecarley/src/PA-2/assets/SpaceShip-1.obj", "/Users/colecarley/src/PA-2/assets/SpaceShip-1.png");
   ship->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
   // enable depth testing
@@ -129,19 +136,19 @@ void Graphics::Render() {
 
   stack.push(stack.top() * sun->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
-  sun->Render(m_vertPos, m_vertNorm, m_vertText);
+  sun->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * ship->GetModel()));
-  ship->Render(m_vertPos, m_vertNorm, m_vertText);
+  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
 
   stack.push(stack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
-  planet->Render(m_vertPos, m_vertNorm, m_vertText);
+  planet->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * moon->GetModel()));
-  moon->Render(m_vertPos, m_vertNorm, m_vertText);
+  moon->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
 
   stack.pop();
   stack.pop();

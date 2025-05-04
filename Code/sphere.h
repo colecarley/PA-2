@@ -4,7 +4,7 @@
 
 class Sphere : public Object {
 public:
-  Sphere();
+  Sphere(const std::string texture_filename);
 
 private:
   void createVertices() override;
