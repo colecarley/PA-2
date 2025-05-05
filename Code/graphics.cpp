@@ -96,25 +96,24 @@ bool Graphics::Initialize(int width, int height) {
 
 void Graphics::Update(double dt, glm::vec3 speed) {
   glm::mat4 tmat, rmat, smat;
-  ComputeTransforms(dt, {0, 0, 0}, {0, 0, 0}, {0.0f}, glm::vec3{0, 1, 0},
-                    {2, 2, 2}, tmat, rmat, smat);
-
+  tmat = glm::mat4(1);  
+	rmat = glm::rotate(glm::mat4(1), 0.5f  * (float)dt, glm::vec3{0, 1, 0});
+  smat = glm::scale(glm::vec3(1));
   sun->Update(tmat * rmat * smat);
 
-  ComputeTransforms(dt, {1, 0, 1}, {6, 0, 6}, {1}, glm::vec3{0, 1, 0},
-                    {0.5f, 0.5f, 0.5f}, tmat, rmat, smat);
+	tmat = glm::translate(glm::mat4(1), glm::vec3(0, cos(2 * dt) * 1.5, sin(2 * dt) * 1.5));
+	rmat = glm::rotate(glm::mat4(1), 2 * (float)dt, glm::vec3{1, 0, 0});
+	smat = glm::scale(glm::vec3(0.01f));
+  ship->Update(tmat * rmat * smat);
 
+	tmat = glm::translate(glm::mat4(1), glm::vec3(cos(dt) * 4, 0, sin(dt) * 4));
+	rmat = glm::rotate(glm::mat4(1), 3 * (float)dt, glm::vec3{0, 1, 0});
+	smat = glm::scale(glm::vec3(0.5f));
   planet->Update(tmat * rmat * smat);
 
-  ComputeTransforms(dt, {3, 0, 3}, {2, 0, 2}, {1}, glm::vec3{0, 1, 0},
-                    {0.4f, 0.4f, 0.4f}, tmat, rmat, smat);
-
+	tmat = glm::translate(glm::mat4(1), glm::vec3(-cos(6 * dt) * 2, sin(dt) * 1.0 / 2.0, -sin(6 * dt) * 2)); rmat = glm::rotate(glm::mat4(1), 3 * (float)dt, glm::vec3{0, 1, 0});
+	smat = glm::scale(glm::vec3(0.3f));
   moon->Update(tmat * rmat * smat);
-
-  ComputeTransforms(dt, {3, 3, 3}, {2, 2, 2}, {3}, glm::vec3{0, 0, 1},
-                    {0.1f, 0.1f, 0.1f}, tmat, rmat, smat);
-  rmat = glm::rotate(rmat, glm::radians(-90.0f), glm::vec3{0, 0, 1});
-  ship->Update(tmat * rmat * smat);
 }
 
 void Graphics::Render() {
@@ -138,9 +137,9 @@ void Graphics::Render() {
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
   sun->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
 
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(stack.top() * ship->GetModel()));
-  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
+	glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                      glm::value_ptr(stack.top() * ship->GetModel()));
+   ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
 
   stack.push(stack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
@@ -149,7 +148,7 @@ void Graphics::Render() {
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * moon->GetModel()));
   moon->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
-
+	
   stack.pop();
   stack.pop();
   stack.pop();
@@ -193,17 +192,3 @@ std::string Graphics::ErrorString(GLenum error) {
   }
 }
 
-void Graphics::ComputeTransforms(double dt, std::vector<float> speed,
-                                 std::vector<float> dist,
-                                 std::vector<float> rotSpeed,
-                                 glm::vec3 rotVector, std::vector<float> scale,
-                                 glm::mat4 &tmat, glm::mat4 &rmat,
-                                 glm::mat4 &smat) {
-  tmat =
-      glm::translate(glm::mat4(1.0f), glm::vec3(cos(speed[0] * dt) * dist[0],
-                                                sin(speed[1] * dt) * dist[1],
-                                                sin(speed[2] * dt) * dist[2]));
-
-  rmat = glm::rotate(glm::mat4(1.0f), rotSpeed[0] * (float)dt, rotVector);
-  smat = glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-} 

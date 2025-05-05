@@ -20,10 +20,6 @@ public:
   std::unique_ptr<Object> &getMoon() { return moon; }
   std::unique_ptr<Object> &getPlanet() { return planet; }
   std::unique_ptr<Camera> &getCamera() { return m_camera; }
-  void ComputeTransforms(double dt, std::vector<float> speed,
-                         std::vector<float> dist, std::vector<float> rotSpeed,
-                         glm::vec3 rotVector, std::vector<float> scale,
-                         glm::mat4 &tmat, glm::mat4 &rmat, glm::mat4 &smat);
 
 private:
   std::string ErrorString(GLenum error);
