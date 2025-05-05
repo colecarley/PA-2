@@ -39,7 +39,6 @@ bool Shader::AddShader(GLenum ShaderType) {
       \
 			out vec3 norm; \
 			out vec2 textCoord; \
-			out vec3 color; \
       \
       uniform mat4 projectionMatrix; \
       uniform mat4 viewMatrix; \
@@ -49,7 +48,6 @@ bool Shader::AddShader(GLenum ShaderType) {
       { \
         vec4 v = vec4(v_position, 1.0); \
         gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * v; \
-        color = v_position; \
 				textCoord = v_texture; \
 				norm = v_normal; \
       } \
@@ -59,7 +57,6 @@ bool Shader::AddShader(GLenum ShaderType) {
       \
       layout (location = 0) in vec2 textCoord; \
 			layout (location = 1) in vec3 norm; \
-			layout (location = 3) in vec3 color; \
 			uniform sampler2D samp;\
       \
       out vec4 frag_color; \

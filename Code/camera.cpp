@@ -31,8 +31,16 @@ void Camera::update_look_at(const glm::vec3 &delta, float pitch, float yaw) {
       this->camera_pos, this->camera_pos + this->camera_front, this->camera_up);
 }
 
-void Camera::update_perspective(double fov_delta, int w, int h) {
+void Camera::update_perspective(float fov_delta, int w, int h) {
+  std::cout << fov_delta << std::endl;
+
   this->fov -= fov_delta;
+  if (this->fov < 1.0f) {
+    this->fov = 1.0f;
+  } else if (this->fov > 60.0f) {
+    this->fov = 60.0f;
+  }
+
   projection = glm::perspective(glm::radians((float)this->fov),
                                 float(w) / float(h), 0.01f, 100.0f);
 }

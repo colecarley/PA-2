@@ -9,7 +9,7 @@ public:
   glm::mat4 GetProjection();
   glm::mat4 GetView();
   void update_look_at(const glm::vec3 &delta, float pitch, float yaw);
-  void update_perspective(double fov, int h, int w);
+  void update_perspective(float fov, int h, int w);
   glm::vec3 &get_camera_front();
   glm::vec3 &get_camera_up();
 

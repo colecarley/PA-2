@@ -18,6 +18,7 @@ public:
   void ProcessInput();
   void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
   static void on_scroll(GLFWwindow *window, double xoffset, double yoffset);
+  float getDt();
 
 private:
   // Window related variables
@@ -29,6 +30,7 @@ private:
   bool m_FULLSCREEN;
   float last_x;
   float last_y;
+  float last_time = 0;
   float yaw = 0;
   bool first_mouse = true;
   float pitch = M_PI;

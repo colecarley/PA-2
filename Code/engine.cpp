@@ -4,12 +4,8 @@
 
 void Engine::on_scroll(GLFWwindow *window, double xoffset, double yoffset) {
   float fov_delta = (float)yoffset;
-  if (fov_delta < 1.0f) {
-    fov_delta = 1.0f;
-  } else if (fov_delta > 45.0f) {
-    fov_delta = 45.0f;
-  }
 
+  std::cout << "yoffset" << yoffset << " fov_delta:" << fov_delta << std::endl;
   Engine *engine = (Engine *)glfwGetWindowUserPointer(window);
   engine->m_graphics->getCamera()->update_perspective(
       fov_delta, engine->m_WINDOW_WIDTH, engine->m_WINDOW_HEIGHT);
@@ -93,24 +89,25 @@ void Engine::ProcessInput() {
   }
 
   std::unique_ptr<Camera> &camera = this->m_graphics->getCamera();
-  float speed = 0.5;
+  float speed = 5;
   glm::vec3 &camera_front = camera->get_camera_front();
   glm::vec3 &camera_up = camera->get_camera_up();
   glm::vec3 norm_cross = glm::normalize(glm::cross(camera_front, camera_up));
 
   glm::vec3 delta = {0, 0, 0};
+  const float dt = getDt();
 
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
-    delta -= speed * glm::vec3(0, 0, 1);
+    delta += speed * camera_front * dt;
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
-    delta += speed * glm::vec3(0, 0, 1);
+    delta -= speed * camera_front * dt;
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
-    delta -= speed * norm_cross;
+    delta -= speed * norm_cross * dt;
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D) == GLFW_PRESS) {
-    delta += speed * norm_cross;
+    delta += speed * norm_cross * dt;
   }
 
   this->m_graphics->getCamera()->update_look_at(delta, pitch, yaw);
@@ -126,4 +123,11 @@ void Engine::Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &window,
 
   // update the graphics
   m_graphics->Update(time);
+}
+
+float Engine::getDt() {
+  double now = glfwGetTime();
+  float dt = now - this->last_time;
+  this->last_time = now;
+  return dt;
 }
