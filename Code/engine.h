@@ -17,6 +17,7 @@ public:
   void Run();
   void ProcessInput();
   void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
+  static void on_scroll(GLFWwindow *window, double xoffset, double yoffset);
 
 private:
   // Window related variables

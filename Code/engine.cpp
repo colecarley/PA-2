@@ -1,7 +1,19 @@
-
 #include "engine.h"
 #include "window.h"
 #include <memory>
+
+void Engine::on_scroll(GLFWwindow *window, double xoffset, double yoffset) {
+  float fov_delta = (float)yoffset;
+  if (fov_delta < 1.0f) {
+    fov_delta = 1.0f;
+  } else if (fov_delta > 45.0f) {
+    fov_delta = 45.0f;
+  }
+
+  Engine *engine = (Engine *)glfwGetWindowUserPointer(window);
+  engine->m_graphics->getCamera()->update_perspective(
+      fov_delta, engine->m_WINDOW_WIDTH, engine->m_WINDOW_HEIGHT);
+}
 
 Engine::Engine(const char *name, int width, int height) {
   m_WINDOW_NAME = name;
@@ -18,10 +30,12 @@ bool Engine::Initialize() {
   m_window = std::make_unique<Window>(m_WINDOW_NAME, &m_WINDOW_WIDTH,
                                       &m_WINDOW_HEIGHT);
   if (!m_window->Initialize()) {
-
     printf("The window failed to initialize.\n");
     return false;
   }
+
+  glfwSetWindowUserPointer(this->m_window->getWindow().get(), this);
+  glfwSetScrollCallback(this->m_window->getWindow().get(), this->on_scroll);
 
   // Start the graphics
   m_graphics = std::make_unique<Graphics>();
@@ -80,25 +94,26 @@ void Engine::ProcessInput() {
 
   std::unique_ptr<Camera> &camera = this->m_graphics->getCamera();
   float speed = 0.5;
-	glm::vec3& camera_front = camera->get_camera_front();
-	glm::vec3& camera_up = camera->get_camera_up();
-	glm::vec3 norm_cross = glm::normalize(glm::cross(camera_front, camera_up));
+  glm::vec3 &camera_front = camera->get_camera_front();
+  glm::vec3 &camera_up = camera->get_camera_up();
+  glm::vec3 norm_cross = glm::normalize(glm::cross(camera_front, camera_up));
+
+  glm::vec3 delta = {0, 0, 0};
 
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
-    camera->update_pos(-speed * glm::vec3(0, 0, 1));
+    delta -= speed * glm::vec3(0, 0, 1);
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
-    camera->update_pos(speed * glm::vec3(0, 0, 1));
+    delta += speed * glm::vec3(0, 0, 1);
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
-    camera->update_pos(-speed * norm_cross);
+    delta -= speed * norm_cross;
   }
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D) == GLFW_PRESS) {
-		camera->update_pos(speed * norm_cross);
+    delta += speed * norm_cross;
   }
 
-  this->m_graphics->getCamera()->update_view(pitch, yaw);
-	this->m_graphics->getCamera()->update_look_at();
+  this->m_graphics->getCamera()->update_look_at(delta, pitch, yaw);
 }
 
 void Engine::Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &window,
