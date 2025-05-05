@@ -26,7 +26,9 @@ add_executable(graphics Code/main.cpp
                         Code/window.h
                         )
 
-												target_compile_options(graphics PUBLIC -Wall -Wpedantic) 
+target_compile_options(graphics PUBLIC -Wall -Wpedantic) 
+
+target_include_directories(graphics PUBLIC /opt/homebrew/opt/)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)

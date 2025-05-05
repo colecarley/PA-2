@@ -1,7 +1,7 @@
 #pragma once
 
-#include </opt/homebrew/opt/glew/include/GL/glew.h>
-#include </opt/homebrew/opt/glfw/include/GLFW/glfw3.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
 
