@@ -5,7 +5,6 @@
 void Engine::on_scroll(GLFWwindow *window, double xoffset, double yoffset) {
   float fov_delta = (float)yoffset;
 
-  std::cout << "yoffset" << yoffset << " fov_delta:" << fov_delta << std::endl;
   Engine *engine = (Engine *)glfwGetWindowUserPointer(window);
   engine->m_graphics->getCamera()->update_perspective(
       fov_delta, engine->m_WINDOW_WIDTH, engine->m_WINDOW_HEIGHT);

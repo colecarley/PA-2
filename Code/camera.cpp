@@ -32,8 +32,6 @@ void Camera::update_look_at(const glm::vec3 &delta, float pitch, float yaw) {
 }
 
 void Camera::update_perspective(float fov_delta, int w, int h) {
-  std::cout << fov_delta << std::endl;
-
   this->fov -= fov_delta;
   if (this->fov < 1.0f) {
     this->fov = 1.0f;
