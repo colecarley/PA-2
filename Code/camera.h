@@ -1,5 +1,4 @@
 #pragma once
-
 #include "graphics_headers.h"
 
 class Camera {
@@ -10,9 +9,10 @@ public:
   glm::mat4 GetProjection();
   glm::mat4 GetView();
   void update_view(float pitch, float yaw);
-  void update_pos(const glm::vec3 &delta) { this->camera_pos += delta; }
-  glm::vec3 &get_camera_front() { return this->camera_front; }
-  glm::vec3 &get_camera_up() { return this->camera_up; }
+  void update_pos(const glm::vec3 &delta);
+	void update_look_at();
+  glm::vec3 &get_camera_front();
+  glm::vec3 &get_camera_up();
 
 private:
   glm::vec3 camera_pos = glm::vec3(0, 0, 8);

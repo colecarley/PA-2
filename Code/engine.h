@@ -16,10 +16,7 @@ public:
   bool Initialize();
   void Run();
   void ProcessInput();
-  unsigned int getDT();
-  long long GetCurrentTimeMillis();
   void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
-  void setSpeed(glm::vec3 spd) { speed = spd; };
 
 private:
   // Window related variables
@@ -34,8 +31,6 @@ private:
   float yaw = 0;
   bool first_mouse = true;
   float pitch = M_PI;
-
-  glm::vec3 speed = glm::vec3(0.f, 0.f, 0.f);
 
   std::unique_ptr<Graphics> m_graphics;
 

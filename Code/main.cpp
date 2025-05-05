@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "engine.h"
-#include "mesh.h"
 
 int main(int argc, char **argv) {
   Engine engine("Tutorial Window Name", 800, 600);

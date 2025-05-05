@@ -12,14 +12,10 @@ public:
   Graphics();
   ~Graphics();
   bool Initialize(int width, int height);
-  void Update(double dt, glm::vec3 speed);
+  void Update(double dt);
   void Render();
 
-  std::unique_ptr<Object> &getInteractWith();
-  std::unique_ptr<Object> &getSun() { return sun; }
-  std::unique_ptr<Object> &getMoon() { return moon; }
-  std::unique_ptr<Object> &getPlanet() { return planet; }
-  std::unique_ptr<Camera> &getCamera() { return m_camera; }
+  std::unique_ptr<Camera> &getCamera();
 
 private:
   std::string ErrorString(GLenum error);

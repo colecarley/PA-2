@@ -94,7 +94,7 @@ bool Graphics::Initialize(int width, int height) {
   return true;
 }
 
-void Graphics::Update(double dt, glm::vec3 speed) {
+void Graphics::Update(double dt) {
   glm::mat4 tmat, rmat, smat;
   tmat = glm::mat4(1);  
 	rmat = glm::rotate(glm::mat4(1), 0.5f  * (float)dt, glm::vec3{0, 1, 0});
@@ -162,8 +162,6 @@ void Graphics::Render() {
   }
 }
 
-std::unique_ptr<Object> &Graphics::getInteractWith() { return sun; }
-
 std::string Graphics::ErrorString(GLenum error) {
   if (error == GL_INVALID_ENUM) {
     return "GL_INVALID_ENUM: An unacceptable value is specified for an "
@@ -192,3 +190,6 @@ std::string Graphics::ErrorString(GLenum error) {
   }
 }
 
+std::unique_ptr<Camera> &Graphics::getCamera() { 
+	return this->m_camera; 
+}
