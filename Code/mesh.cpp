@@ -3,6 +3,13 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+Mesh::Mesh(const std::string &mesh_file_path,
+           const std::string &texture_file_path)
+    : mesh_file_path(mesh_file_path) {
+  this->texture = std::make_unique<Texture>(texture_file_path);
+  this->createVertices();
+}
+
 void Mesh::createVertices() {
   Assimp::Importer importer;
   const aiScene *scene =
@@ -28,11 +35,4 @@ void Mesh::createVertices() {
       Indices.push_back(face.mIndices[j]);
     }
   }
-}
-
-Mesh::Mesh(const std::string &mesh_file_path,
-           const std::string &texture_file_path)
-    : mesh_file_path(mesh_file_path) {
-  this->texture = std::make_unique<Texture>(texture_file_path);
-  this->createVertices();
 }

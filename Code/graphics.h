@@ -29,7 +29,7 @@ private:
   GLint m_vertPos;
   GLint m_vertNorm;
   GLint m_vertText;
-	GLint m_samplerLoc;
+  GLint m_samplerLoc;
 
   std::unique_ptr<Object> sun;
   std::unique_ptr<Object> planet;

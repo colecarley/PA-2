@@ -74,21 +74,17 @@ bool Graphics::Initialize(int width, int height) {
   m_vertText = m_shader->GetAttribLocation("v_texture");
 
   // Create the object
-  sun =
-      std::make_unique<Sphere>("/Users/colecarley/src/PA-2/assets/2k_sun.jpg");
+  sun = std::make_unique<Sphere>("../assets/2k_sun.jpg");
   sun->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  planet = std::make_unique<Sphere>(
-      "/Users/colecarley/src/PA-2/assets/2k_earth_daymap.jpg");
+  planet = std::make_unique<Sphere>("../assets/2k_earth_daymap.jpg");
   planet->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  moon =
-      std::make_unique<Sphere>("/Users/colecarley/src/PA-2/assets/2k_moon.jpg");
+  moon = std::make_unique<Sphere>("../assets/2k_moon.jpg");
   moon->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  ship = std::make_unique<Mesh>(
-      "/Users/colecarley/src/PA-2/assets/SpaceShip-1.obj",
-      "/Users/colecarley/src/PA-2/assets/SpaceShip-1.png");
+  ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
+                                "../assets/SpaceShip-1.png");
   ship->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
   // enable depth testing

@@ -1,7 +1,8 @@
 #include "object.h"
 #include "graphics_headers.h"
 
-void Object::Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc) {
+void Object::Initialize(GLint posAttribLoc, GLint vertAttribLoc,
+                        GLint textAttribLoc) {
   // set up your VAO
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -14,7 +15,7 @@ void Object::Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttri
   glVertexAttribPointer(posAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
   glVertexAttribPointer(vertAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                         (void *)offsetof(Vertex, normal));
-	glVertexAttribPointer(textAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+  glVertexAttribPointer(textAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                         (void *)offsetof(Vertex, texture));
 
   // setting the Index VBO
@@ -57,7 +58,8 @@ glm::mat4 Object::GetModel() {
   return model;
 }
 
-void Object::Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc, GLint samplerAttribloc) {
+void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
+                    GLint textAttribLoc, GLint samplerAttribloc) {
   // bind VAO
   glBindVertexArray(vao);
 
@@ -69,11 +71,11 @@ void Object::Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc
   // this is the poistion attrib in the vertex shader
   glEnableVertexAttribArray(posAttribLoc);
   glEnableVertexAttribArray(vertAttribLoc);
-	glEnableVertexAttribArray(textAttribLoc);
-	
-	glUniform1i(samplerAttribloc, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, this->texture->get_texture_id());
+  glEnableVertexAttribArray(textAttribLoc);
+
+  glUniform1i(samplerAttribloc, 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, this->texture->get_texture_id());
 
   // draw call to OpenGL
   glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
