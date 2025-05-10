@@ -1,3 +1,0 @@
-/Users/colecarley/src/PA-2/Code/CMakeFiles/graphics.dir
-/Users/colecarley/src/PA-2/Code/CMakeFiles/edit_cache.dir
-/Users/colecarley/src/PA-2/Code/CMakeFiles/rebuild_cache.dir
