@@ -10,6 +10,35 @@ void Engine::on_scroll(GLFWwindow *window, double xoffset, double yoffset) {
       fov_delta, engine->m_WINDOW_WIDTH, engine->m_WINDOW_HEIGHT);
 }
 
+void Engine::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
+  Engine *engine = (Engine *)glfwGetWindowUserPointer(window);
+
+  float offset_x = 0;
+  float offset_y = 0;
+
+  if (!engine->first_mouse) {
+    offset_x = xpos - engine->last_x;
+    offset_y = ypos - engine->last_y;
+    engine->last_x = xpos;
+    engine->last_y = ypos;
+  }
+
+  engine->first_mouse = false;
+
+  float sensitivity = 0.1f;
+  offset_x *= sensitivity;
+  offset_y *= sensitivity;
+
+  engine->yaw += offset_x;
+  engine->pitch += offset_y;
+
+  if (engine->pitch > 89.0f) {
+    engine->pitch = 89.0f;
+  } else if (engine->pitch < -89.0f) {
+    engine->pitch = -89.0f;
+  }
+}
+
 Engine::Engine(const char *name, int width, int height) {
   m_WINDOW_NAME = name;
   m_WINDOW_WIDTH = width;
@@ -31,6 +60,8 @@ bool Engine::Initialize() {
 
   glfwSetWindowUserPointer(this->m_window->getWindow().get(), this);
   glfwSetScrollCallback(this->m_window->getWindow().get(), this->on_scroll);
+  glfwSetCursorPosCallback(this->m_window->getWindow().get(),
+                           this->on_mouse_move);
 
   // Start the graphics
   m_graphics = std::make_unique<Graphics>();
@@ -55,34 +86,6 @@ void Engine::Run() {
 }
 
 void Engine::ProcessInput() {
-  double xpos, ypos;
-  glfwGetCursorPos(this->m_window->getWindow().get(), &xpos, &ypos);
-
-  float offset_x = 0;
-  float offset_y = 0;
-
-  if (!first_mouse) {
-    offset_x = xpos - last_x;
-    offset_y = ypos - last_y;
-    this->last_x = xpos;
-    this->last_y = ypos;
-  }
-
-  this->first_mouse = false;
-
-  float sensitivity = 0.1f;
-  offset_x *= sensitivity;
-  offset_y *= sensitivity;
-
-  this->yaw += offset_x;
-  this->pitch += offset_y;
-
-  if (this->pitch > 89.0f) {
-    this->pitch = 89.0f;
-  } else if (this->pitch < -89.0f) {
-    this->pitch = -89.0f;
-  }
-
   if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(m_window->getWindow().get(), true);
   }

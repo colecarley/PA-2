@@ -11,6 +11,7 @@
 class Engine {
 public:
   Engine(const char *name, int width, int height);
+  enum Mode { PLANETARY_OBSERVATION, EXPLORATION };
 
   ~Engine();
   bool Initialize();
@@ -18,6 +19,7 @@ public:
   void ProcessInput();
   void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
   static void on_scroll(GLFWwindow *window, double xoffset, double yoffset);
+	static void on_mouse_move(GLFWwindow *window, double xoffset, double yoffset);
   float getDt();
 
 private:
@@ -32,10 +34,11 @@ private:
   float last_y;
   float last_time = 0;
   float yaw = 0;
-  bool first_mouse = true;
   float pitch = M_PI;
+  bool first_mouse = true;
 
   std::unique_ptr<Graphics> m_graphics;
+	Mode mode = PLANETARY_OBSERVATION;
 
   bool m_running;
 };
