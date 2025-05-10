@@ -73,6 +73,7 @@ bool Shader::AddShader(GLenum ShaderType) {
       \
 			out vec3 norm; \
 			out vec2 textCoord; \
+			out vec3 FragPos;\
       \
       uniform mat4 projectionMatrix; \
       uniform mat4 viewMatrix; \
@@ -83,7 +84,8 @@ bool Shader::AddShader(GLenum ShaderType) {
         vec4 v = vec4(v_position, 1.0); \
         gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * v; \
 				textCoord = v_texture; \
-				norm = v_normal; \
+				norm = mat3(transpose(inverse(modelMatrix))) * v_normal; \
+				FragPos = vec3(modelMatrix * v);\
       } \
     ";
   } else if (ShaderType == GL_FRAGMENT_SHADER) {
@@ -91,15 +93,30 @@ bool Shader::AddShader(GLenum ShaderType) {
       \
       layout (location = 0) in vec2 textCoord; \
 			layout (location = 1) in vec3 norm; \
+			uniform bool is_emissive;\
 			uniform sampler2D samp;\
+			uniform vec3 lightPos; \
+			uniform vec3 lightColor;\
       \
       out vec4 frag_color; \
+			in vec3 FragPos;\
       \
       void main(void) \
       { \
-        frag_color = texture(samp, textCoord); \
-      } \
-    ";
+				vec4 color = texture(samp, textCoord);\
+				if (is_emissive) {\
+					frag_color = color;\
+				} else {\
+					vec3 normal = normalize(norm);\
+					vec3 lightDir = normalize(lightPos - FragPos);\
+					float diff = max(dot(normal, lightDir), 0.0);\
+					vec3 diffuse = (diff * lightColor);\
+					float ambient_strength = 0.1; \
+					vec3 ambient = ambient_strength * lightColor;\
+					vec3 result = (ambient + diffuse) * vec3(color);\
+					frag_color = vec4(result, 1.0f);\
+				}\
+			}";
   }
 
   return AttachShader(s, ShaderType);

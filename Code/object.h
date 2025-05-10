@@ -11,7 +11,8 @@ public:
   void Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc);
   void Update(glm::mat4 model_matrix);
   void Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc,
-              GLint samplerAttribLoc);
+              GLint samplerAttribLoc, GLint light_pos_loc, 
+              GLint light_color_loc, GLint is_emissive_loc, bool is_emissive);
   glm::mat4 GetModel();
 
 protected:

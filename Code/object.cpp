@@ -59,7 +59,9 @@ glm::mat4 Object::GetModel() {
 }
 
 void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
-                    GLint textAttribLoc, GLint samplerAttribloc) {
+                    GLint textAttribLoc, GLint samplerAttribloc,
+                    GLint light_pos_loc, GLint light_color_loc,
+                    GLint is_emissive_loc, bool is_emissive) {
   // bind VAO
   glBindVertexArray(vao);
 
@@ -74,6 +76,10 @@ void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
   glEnableVertexAttribArray(textAttribLoc);
 
   glUniform1i(samplerAttribloc, 0);
+  glUniform1i(is_emissive_loc, is_emissive);
+  glUniform3fv(light_pos_loc, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
+  glUniform3fv(light_color_loc, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
+
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, this->texture->get_texture_id());
 

@@ -78,6 +78,24 @@ bool Graphics::Initialize(int width, int height) {
     return false;
   }
 
+  is_emissive_loc = m_shader->GetUniformLocation("is_emissive");
+  if (is_emissive_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "is_emissive_loc not found\n";
+    return false;
+  }
+
+  light_pos_loc = m_shader->GetUniformLocation("lightPos");
+  if (light_pos_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "light_pos_loc not found\n";
+    return false;
+  }
+
+  light_color_loc = m_shader->GetUniformLocation("lightColor");
+  if (light_color_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "light_color_loc not found\n";
+    return false;
+  }
+
   // Find where vertex attributes are in shader
   m_vertPos = m_shader->GetAttribLocation("v_position");
   m_vertNorm = m_shader->GetAttribLocation("v_normal");
@@ -158,19 +176,23 @@ void Graphics::Render() {
 
   stack.push(stack.top() * sun->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
-  sun->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
+  sun->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
+              light_color_loc, is_emissive_loc, true);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * ship->GetModel()));
-  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
+  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
+               light_color_loc, is_emissive_loc, false);
 
   stack.push(stack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
-  planet->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
+  planet->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
+                 light_color_loc, is_emissive_loc, false);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * moon->GetModel()));
-  moon->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc);
+  moon->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
+               light_color_loc, is_emissive_loc, false);
 
   stack.pop();
   stack.pop();
