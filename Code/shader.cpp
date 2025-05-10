@@ -25,6 +25,40 @@ bool Shader::Initialize() {
   return true;
 }
 
+bool Shader::AttachShader(std::string s, GLenum ShaderType) {
+  GLuint ShaderObj = glCreateShader(ShaderType);
+
+  if (ShaderObj == 0) {
+    std::cerr << "Error creating shader type " << ShaderType << std::endl;
+    return false;
+  }
+
+  // Save the shader object - will be deleted in the destructor
+  m_shaderObjList.push_back(ShaderObj);
+
+  const GLchar *p[1];
+  p[0] = s.c_str();
+  GLint Lengths[1] = {(GLint)s.size()};
+
+  glShaderSource(ShaderObj, 1, p, Lengths);
+
+  glCompileShader(ShaderObj);
+
+  GLint success;
+  glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
+
+  if (!success) {
+    GLchar InfoLog[1024];
+    glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
+    std::cerr << "Error compiling: " << InfoLog << std::endl;
+    return false;
+  }
+
+  glAttachShader(m_shaderProg, ShaderObj);
+
+  return true;
+}
+
 // Use this method to add shaders to the program. When finished - call
 // finalize()
 bool Shader::AddShader(GLenum ShaderType) {
@@ -68,37 +102,7 @@ bool Shader::AddShader(GLenum ShaderType) {
     ";
   }
 
-  GLuint ShaderObj = glCreateShader(ShaderType);
-
-  if (ShaderObj == 0) {
-    std::cerr << "Error creating shader type " << ShaderType << std::endl;
-    return false;
-  }
-
-  // Save the shader object - will be deleted in the destructor
-  m_shaderObjList.push_back(ShaderObj);
-
-  const GLchar *p[1];
-  p[0] = s.c_str();
-  GLint Lengths[1] = {(GLint)s.size()};
-
-  glShaderSource(ShaderObj, 1, p, Lengths);
-
-  glCompileShader(ShaderObj);
-
-  GLint success;
-  glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
-
-  if (!success) {
-    GLchar InfoLog[1024];
-    glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
-    std::cerr << "Error compiling: " << InfoLog << std::endl;
-    return false;
-  }
-
-  glAttachShader(m_shaderProg, ShaderObj);
-
-  return true;
+  return AttachShader(s, ShaderType);
 }
 
 // After all the shaders have been added to the program call this function

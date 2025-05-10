@@ -24,6 +24,8 @@ add_executable(graphics Code/main.cpp
 												Code/texture.h
                         Code/window.cpp
                         Code/window.h
+												Code/skybox.h
+												Code/skybox.cpp
                         )
 
 target_compile_options(graphics PUBLIC -Wall -Wpedantic) 

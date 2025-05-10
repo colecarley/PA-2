@@ -16,6 +16,16 @@ bool Graphics::Initialize(int width, int height) {
     return false;
   }
 
+  // Init skybox
+  skybox = std::make_unique<Skybox>(std::array<std::string, 6>{
+      "../assets/skybox/right.png",
+      "../assets/skybox/left.png",
+      "../assets/skybox/top.png",
+      "../assets/skybox/bottom.png",
+      "../assets/skybox/front.png",
+      "../assets/skybox/back.png",
+  });
+
   // Set up the shaders
   m_shader = std::make_unique<Shader>();
   if (!m_shader->Initialize()) {
@@ -124,6 +134,15 @@ void Graphics::Render() {
   // clear the screen
   glClearColor(0, 0, 0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // enable the skybox shader
+  std::unique_ptr<Shader> &skybox_shader = skybox->get_shader();
+  skybox_shader->Enable();
+  glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE,
+                     glm::value_ptr(m_camera->GetProjection()));
+  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE,
+                     glm::value_ptr(glm::mat4(glm::mat3(m_camera->GetView()))));
+  skybox->render();
 
   // Start the correct program
   m_shader->Enable();

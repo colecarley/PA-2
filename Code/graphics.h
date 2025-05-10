@@ -4,6 +4,7 @@
 #include "graphics_headers.h"
 #include "object.h"
 #include "shader.h"
+#include "skybox.h"
 #include <memory>
 #include <vector>
 
@@ -35,4 +36,7 @@ private:
   std::unique_ptr<Object> planet;
   std::unique_ptr<Object> moon;
   std::unique_ptr<Object> ship;
+
+  std::unique_ptr<Shader> skybox_shader;
+  std::unique_ptr<Skybox> skybox;
 };
