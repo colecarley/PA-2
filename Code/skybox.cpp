@@ -66,12 +66,12 @@ void Skybox::initialize_shaders() {
 
   std::string v = "#version 410\n \
 															 layout (location = 0) in vec3 aPos;\
-															 out vec3 tex_coords;\
-															 uniform mat4 projectionMatrix;\
-															 uniform mat4 viewMatrix;\
+															 uniform mat4 projection;\
+															 uniform mat4 view;\
+															 out vec3 tex_coord;\
 															 void main() {\
-																 tex_coords = aPos;\
-																 gl_Position = projectionMatrix * viewMatrix * vec4(aPos, 1.0);\
+																 tex_coord = aPos;\
+																 gl_Position = projection * view * vec4(aPos, 1.0);\
 															 }\
                               ";
   if (!this->shader->AttachShader(v, GL_VERTEX_SHADER)) {
@@ -80,11 +80,11 @@ void Skybox::initialize_shaders() {
   }
 
   std::string f = "#version 410\n \
-																 out vec4 FragColor;\
-																 in vec3 tex_coords;\
+																 out vec4 frag_color;\
+																 in vec3 tex_coord;\
 																 uniform samplerCube skybox;\
 																 void main() {\
-																	 FragColor = texture(skybox, tex_coords);\
+																	 frag_color = texture(skybox, tex_coord);\
 																 }\
 																 ";
   this->shader->AttachShader(f, GL_FRAGMENT_SHADER);
@@ -95,7 +95,7 @@ void Skybox::initialize_shaders() {
   }
 }
 
-void Skybox::render() {
+void Skybox::render(glm::mat4 projection, glm::mat4 view) {
   // bind VAO
   glBindVertexArray(vao);
 
@@ -105,6 +105,11 @@ void Skybox::render() {
 
   glEnableVertexAttribArray(0);
 
+  shader->Enable();
+  glUniformMatrix4fv(shader->GetUniformLocation("projection"), 1, GL_FALSE,
+                     glm::value_ptr(projection));
+  glUniformMatrix4fv(shader->GetUniformLocation("view"), 1, GL_FALSE,
+                     glm::value_ptr(glm::mat4(glm::mat3(view))));
   glUniform1i(shader->GetUniformLocation("skybox"), 0);
 
   glDepthMask(GL_FALSE);

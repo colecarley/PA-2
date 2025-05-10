@@ -52,21 +52,21 @@ bool Graphics::Initialize(int width, int height) {
   }
 
   // Locate the projection matrix in the shader
-  m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
+  m_projectionMatrix = m_shader->GetUniformLocation("projection");
   if (m_projectionMatrix == INVALID_UNIFORM_LOCATION) {
     printf("m_projectionMatrix not found\n");
     return false;
   }
 
   // Locate the view matrix in the shader
-  m_viewMatrix = m_shader->GetUniformLocation("viewMatrix");
+  m_viewMatrix = m_shader->GetUniformLocation("view");
   if (m_viewMatrix == INVALID_UNIFORM_LOCATION) {
     printf("m_viewMatrix not found\n");
     return false;
   }
 
   // Locate the model matrix in the shader
-  m_modelMatrix = m_shader->GetUniformLocation("modelMatrix");
+  m_modelMatrix = m_shader->GetUniformLocation("model");
   if (m_modelMatrix == INVALID_UNIFORM_LOCATION) {
     printf("m_modelMatrix not found\n");
     return false;
@@ -84,13 +84,13 @@ bool Graphics::Initialize(int width, int height) {
     return false;
   }
 
-  light_pos_loc = m_shader->GetUniformLocation("lightPos");
+  light_pos_loc = m_shader->GetUniformLocation("light_pos");
   if (light_pos_loc == INVALID_UNIFORM_LOCATION) {
     std::cerr << "light_pos_loc not found\n";
     return false;
   }
 
-  light_color_loc = m_shader->GetUniformLocation("lightColor");
+  light_color_loc = m_shader->GetUniformLocation("light_color");
   if (light_color_loc == INVALID_UNIFORM_LOCATION) {
     std::cerr << "light_color_loc not found\n";
     return false;
@@ -154,13 +154,7 @@ void Graphics::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // enable the skybox shader
-  std::unique_ptr<Shader> &skybox_shader = skybox->get_shader();
-  skybox_shader->Enable();
-  glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE,
-                     glm::value_ptr(m_camera->GetProjection()));
-  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE,
-                     glm::value_ptr(glm::mat4(glm::mat3(m_camera->GetView()))));
-  skybox->render();
+  skybox->render(m_camera->GetProjection(), m_camera->GetView());
 
   // Start the correct program
   m_shader->Enable();

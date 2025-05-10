@@ -18,7 +18,7 @@ private:
 public:
   Skybox(const std::array<std::string, 6> &cubemap_path);
   std::unique_ptr<Shader> &get_shader();
-  void render();
+  void render(glm::mat4 projection, glm::mat4 view);
 
 private:
   void create_vertices();
