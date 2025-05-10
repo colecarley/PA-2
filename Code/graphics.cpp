@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include "graphics_headers.h"
 #include "mesh.h"
+#include "mode.h"
 #include "sphere.h"
 #include <memory>
 #include <stack>
@@ -167,7 +168,7 @@ bool Graphics::Initialize(int width, int height) {
   return true;
 }
 
-void Graphics::Update(double dt) {
+void Graphics::Update(double dt, Mode mode) {
   glm::mat4 tmat, rmat, smat;
   tmat = glm::mat4(1);
   rmat = glm::rotate(glm::mat4(1), 0.5f * (float)dt, glm::vec3{0, 1, 0});
@@ -175,26 +176,49 @@ void Graphics::Update(double dt) {
   sun->Update(tmat * rmat * smat);
 
   tmat = glm::translate(glm::mat4(1),
-                        glm::vec3(0, cos(2 * dt) * 1.5, sin(2 * dt) * 1.5));
-  rmat = glm::rotate(glm::mat4(1), 2 * (float)dt, glm::vec3{1, 0, 0});
-  smat = glm::scale(glm::vec3(0.01f));
-  ship->Update(tmat * rmat * smat);
-
-  tmat = glm::translate(glm::mat4(1),
-                        glm::vec3(cos(dt * 0.2) * 4, 0, sin(dt * 0.2) * 4));
-  rmat = glm::rotate(glm::mat4(1), 3 * (float)dt, glm::vec3{0, 1, 0});
+                        glm::vec3{cos(dt * 0.2) * 4, 0, sin(dt * 0.2) * 4});
+  rmat = glm::rotate(glm::mat4(1), 0.5f * (float)dt, glm::vec3{0, 1, 0});
   smat = glm::scale(glm::vec3(0.5f));
   planet->Update(tmat * rmat * smat);
+
+  if (mode == PLANETARY_OBSERVATION) {
+    float cam_orbit_radius = 1.0f;
+    float cam_orbit_speed = 0.2f;
+    glm::vec3 planet_pos = glm::vec3((sun->GetModel() * planet->GetModel())[3]);
+    glm::vec3 camera_offset =
+        glm::vec3{cos(dt * cam_orbit_speed) * cam_orbit_radius,
+                  1.0f, // slightly above
+                  sin(dt * cam_orbit_speed) * cam_orbit_radius};
+    glm::vec3 camera_pos = planet_pos + camera_offset;
+
+    this->m_camera->set_position(camera_pos);
+    this->m_camera->set_front(planet_pos);
+    this->m_camera->set_view(glm::lookAt(this->m_camera->get_position(),
+                                         this->m_camera->get_front(),
+                                         this->m_camera->get_up()));
+  } else {
+    tmat = glm::translate(glm::mat4(1),
+                          this->m_camera->get_position() +
+                              glm::normalize(this->m_camera->get_front()));
+    tmat = glm::translate(tmat, glm::vec3(0, -0.3, 0));
+    smat = glm::scale(glm::vec3(0.02f));
+    rmat = glm::rotate(
+        glm::mat4(glm::mat3(glm::transpose(this->m_camera->GetView()))),
+        glm::radians(20.0f), glm::vec3(1, 0, 0));
+    rmat = glm::rotate(rmat, glm::radians(180.0f), glm::vec3(0, 1, 0));
+
+    ship->Update(tmat * rmat * smat);
+  }
 
   tmat = glm::translate(
       glm::mat4(1),
       glm::vec3(-cos(2 * dt) * 2, sin(dt) * 1.0 / 2.0, -sin(2 * dt) * 2));
   rmat = glm::rotate(glm::mat4(1), 3 * (float)dt, glm::vec3{0, 1, 0});
   smat = glm::scale(glm::vec3(0.3f));
-  moon->Update(tmat * rmat * smat);
+  moon->Update(tmat * smat);
 }
 
-void Graphics::Render() {
+void Graphics::Render(Mode mode) {
   // clear the screen
   glClearColor(0, 0, 0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -222,13 +246,15 @@ void Graphics::Render() {
               material_ambient_loc, material_specular_loc, material_diffuse_loc,
               material_shininess_loc, is_emissive_loc, true);
 
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
-                     glm::value_ptr(stack.top() * ship->GetModel()));
-  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, m_sampler2Loc,
-               light_pos_loc, light_color_loc, has_normal_map_loc,
-               material_ambient_loc, material_specular_loc,
-               material_diffuse_loc, material_shininess_loc, is_emissive_loc,
-               false);
+  if (mode == EXPLORATION) {
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
+                       glm::value_ptr(ship->GetModel()));
+    ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, m_sampler2Loc,
+                 light_pos_loc, light_color_loc, has_normal_map_loc,
+                 material_ambient_loc, material_specular_loc,
+                 material_diffuse_loc, material_shininess_loc, is_emissive_loc,
+                 false);
+  }
 
   stack.push(stack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));

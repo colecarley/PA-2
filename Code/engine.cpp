@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "mode.h"
 #include "window.h"
 #include <memory>
 
@@ -91,45 +92,57 @@ void Engine::ProcessInput() {
   }
 
   std::unique_ptr<Camera> &camera = this->m_graphics->getCamera();
-  float speed = 5;
-  glm::vec3 &camera_front = camera->get_camera_front();
-  glm::vec3 &camera_up = camera->get_camera_up();
+  float speed = 2;
+  glm::vec3 &camera_front = camera->get_front();
+  glm::vec3 &camera_up = camera->get_up();
   glm::vec3 norm_cross = glm::normalize(glm::cross(camera_front, camera_up));
-
   glm::vec3 delta = {0, 0, 0};
-  const float dt = getDt();
 
-  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
-    delta += speed * camera_front * dt;
-  }
-  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
-    delta -= speed * camera_front * dt;
-  }
-  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
-    delta -= speed * norm_cross * dt;
-  }
-  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D) == GLFW_PRESS) {
-    delta += speed * norm_cross * dt;
+  if (this->mode == EXPLORATION) {
+    const float dt = getDt();
+
+    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
+      delta += speed * camera_front * dt;
+    }
+    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
+      delta -= speed * camera_front * dt;
+    }
+    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
+      delta -= speed * norm_cross * dt;
+    }
+    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D) == GLFW_PRESS) {
+      delta += speed * norm_cross * dt;
+    }
   }
 
   this->m_graphics->getCamera()->update_look_at(delta, pitch, yaw);
+  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ENTER) == GLFW_PRESS) {
+    this->switch_modes();
+  }
 }
 
 void Engine::Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &window,
                      double time) {
   // render the objects
-  m_graphics->Render();
+  m_graphics->Render(mode);
 
   // swap the buffers
   m_window->Swap();
 
   // update the graphics
-  m_graphics->Update(time);
+  m_graphics->Update(time, this->mode);
 }
-
 float Engine::getDt() {
   double now = glfwGetTime();
   float dt = now - this->last_time;
   this->last_time = now;
   return dt;
+}
+
+void Engine::switch_modes() {
+  if (this->mode == PLANETARY_OBSERVATION) {
+    this->mode = EXPLORATION;
+  } else {
+    this->mode = PLANETARY_OBSERVATION;
+  }
 }

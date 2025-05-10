@@ -2,6 +2,7 @@
 
 #include "camera.h"
 #include "graphics_headers.h"
+#include "mode.h"
 #include "object.h"
 #include "shader.h"
 #include "skybox.h"
@@ -13,8 +14,8 @@ public:
   Graphics();
   ~Graphics();
   bool Initialize(int width, int height);
-  void Update(double dt);
-  void Render();
+  void Update(double dt, Mode mode);
+  void Render(Mode mode);
 
   std::unique_ptr<Camera> &getCamera();
 

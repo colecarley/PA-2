@@ -27,6 +27,7 @@ add_executable(graphics Code/main.cpp
 												Code/skybox.h
 												Code/skybox.cpp
 												Code/material.h
+												Code/mode.h
                         )
 
 target_compile_options(graphics PUBLIC -Wall -Wpedantic) 

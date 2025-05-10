@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics.h"
+#include "mode.h"
 #include "window.h"
 #include <assert.h>
 #include <sys/time.h>
@@ -11,7 +12,6 @@
 class Engine {
 public:
   Engine(const char *name, int width, int height);
-  enum Mode { PLANETARY_OBSERVATION, EXPLORATION };
 
   ~Engine();
   bool Initialize();
@@ -19,8 +19,9 @@ public:
   void ProcessInput();
   void Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &, double);
   static void on_scroll(GLFWwindow *window, double xoffset, double yoffset);
-	static void on_mouse_move(GLFWwindow *window, double xoffset, double yoffset);
+  static void on_mouse_move(GLFWwindow *window, double xoffset, double yoffset);
   float getDt();
+  void switch_modes();
 
 private:
   // Window related variables
@@ -38,7 +39,7 @@ private:
   bool first_mouse = true;
 
   std::unique_ptr<Graphics> m_graphics;
-	Mode mode = PLANETARY_OBSERVATION;
+  Mode mode = PLANETARY_OBSERVATION;
 
   bool m_running;
 };
