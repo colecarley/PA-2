@@ -31,9 +31,16 @@ private:
   GLint m_vertNorm;
   GLint m_vertText;
   GLint m_samplerLoc;
+  GLint m_sampler2Loc;
   GLint is_emissive_loc;
   GLint light_pos_loc;
   GLint light_color_loc;
+  GLint view_pos_loc;
+  GLint has_normal_map_loc;
+  GLint material_ambient_loc;
+  GLint material_specular_loc;
+  GLint material_diffuse_loc;
+  GLint material_shininess_loc;
 
   std::unique_ptr<Object> sun;
   std::unique_ptr<Object> planet;

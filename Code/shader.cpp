@@ -90,13 +90,23 @@ bool Shader::AddShader(GLenum ShaderType) {
     ";
   } else if (ShaderType == GL_FRAGMENT_SHADER) {
     s = "#version 410\n \
+			struct Material {\
+				vec3 ambient;\
+				vec3 diffuse;\
+				vec3 specular;\
+				float shininess;\
+			};\
       \
       layout (location = 0) in vec2 tex_coord; \
 			layout (location = 1) in vec3 norm; \
 			uniform bool is_emissive;\
+			uniform bool has_normal_map;\
 			uniform sampler2D samp;\
+			uniform sampler2D samp2;\
 			uniform vec3 light_pos; \
 			uniform vec3 light_color;\
+			uniform vec3 view_pos;\
+			uniform Material material; \
       \
       out vec4 frag_color; \
 			in vec3 frag_pos;\
@@ -107,13 +117,20 @@ bool Shader::AddShader(GLenum ShaderType) {
 				if (is_emissive) {\
 					frag_color = color;\
 				} else {\
-					vec3 normal = normalize(norm);\
+					vec3 normal;\
+					if (has_normal_map) {\
+						normal = normalize(norm + texture(samp2, tex_coord).xyz * 2 - 1);\
+					}\
+					normal = normalize(norm);\
 					vec3 light_dir = normalize(light_pos - frag_pos);\
 					float diff = max(dot(normal, light_dir), 0.0);\
-					vec3 diffuse = (diff * light_color);\
-					float ambient_strength = 0.2; \
-					vec3 ambient = ambient_strength * light_color;\
-					vec3 result = (ambient + diffuse) * vec3(color);\
+					vec3 diffuse = (diff * material.diffuse) * light_color;\
+					vec3 view_dir = normalize(view_pos - frag_pos);\
+					vec3 reflect_dir = reflect(-light_dir, normal);\
+					float spec = pow(max(dot(view_dir, reflect_dir), 0.0), material.shininess);\
+					vec3 specular = (material.specular * spec) * light_color;\
+					vec3 ambient = material.ambient * light_color;\
+					vec3 result = (ambient + diffuse + specular) * vec3(color);\
 					frag_color = vec4(result, 1.0f);\
 				}\
 			}";

@@ -50,3 +50,5 @@ glm::mat4 Camera::GetView() { return view; }
 glm::vec3 &Camera::get_camera_front() { return this->camera_front; }
 
 glm::vec3 &Camera::get_camera_up() { return this->camera_up; }
+
+glm::vec3 &Camera::get_position() { return this->camera_pos; }

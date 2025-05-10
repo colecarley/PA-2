@@ -12,6 +12,7 @@ public:
   void update_perspective(float fov, int h, int w);
   glm::vec3 &get_camera_front();
   glm::vec3 &get_camera_up();
+  glm::vec3 &get_position();
 
 private:
   glm::vec3 camera_pos = glm::vec3(0, 0, 8);

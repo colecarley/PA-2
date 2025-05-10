@@ -59,8 +59,11 @@ glm::mat4 Object::GetModel() {
 }
 
 void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
-                    GLint textAttribLoc, GLint samplerAttribloc,
-                    GLint light_pos_loc, GLint light_color_loc,
+                    GLint textAttribLoc, GLint samplerAttribLoc,
+                    GLint sampler2AttribLoc, GLint light_pos_loc,
+                    GLint light_color_loc, GLint has_normal_map_loc,
+                    GLint material_ambient_loc, GLint material_specular_loc,
+                    GLint material_diffuse_loc, GLint material_shininess_loc,
                     GLint is_emissive_loc, bool is_emissive) {
   // bind VAO
   glBindVertexArray(vao);
@@ -75,13 +78,25 @@ void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
   glEnableVertexAttribArray(vertAttribLoc);
   glEnableVertexAttribArray(textAttribLoc);
 
-  glUniform1i(samplerAttribloc, 0);
+  glUniform1i(samplerAttribLoc, 0);
   glUniform1i(is_emissive_loc, is_emissive);
   glUniform3fv(light_pos_loc, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
   glUniform3fv(light_color_loc, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
+  glUniform1i(has_normal_map_loc, this->has_normal_map);
+
+  glUniform3fv(material_ambient_loc, 1, glm::value_ptr(material.ambient));
+  glUniform3fv(material_diffuse_loc, 1, glm::value_ptr(material.diffuse));
+  glUniform3fv(material_specular_loc, 1, glm::value_ptr(material.specular));
+  glUniform1f(material_shininess_loc, material.shininess);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, this->texture->get_texture_id());
+
+  if (this->normal_texture != nullptr) {
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, this->normal_texture->get_texture_id());
+    glUniform1i(sampler2AttribLoc, 1);
+  }
 
   // draw call to OpenGL
   glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
@@ -95,3 +110,5 @@ void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+void Object::set_material(Material m) { this->material = m; }

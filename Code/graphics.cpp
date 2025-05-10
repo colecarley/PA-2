@@ -78,6 +78,12 @@ bool Graphics::Initialize(int width, int height) {
     return false;
   }
 
+  m_sampler2Loc = m_shader->GetUniformLocation("samp2");
+  if (m_sampler2Loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "m_samplerLoc not found\n";
+    return false;
+  }
+
   is_emissive_loc = m_shader->GetUniformLocation("is_emissive");
   if (is_emissive_loc == INVALID_UNIFORM_LOCATION) {
     std::cerr << "is_emissive_loc not found\n";
@@ -96,19 +102,58 @@ bool Graphics::Initialize(int width, int height) {
     return false;
   }
 
+  view_pos_loc = m_shader->GetUniformLocation("view_pos");
+  if (view_pos_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "view_pos_loc not found\n";
+    return false;
+  }
+
+  has_normal_map_loc = m_shader->GetUniformLocation("has_normal_map");
+  if (has_normal_map_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "has_normal_map_loc not found\n";
+    return false;
+  }
+
+  material_ambient_loc = m_shader->GetUniformLocation("material.ambient");
+  if (material_ambient_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "material_loc not found\n";
+    return false;
+  }
+
+  material_diffuse_loc = m_shader->GetUniformLocation("material.diffuse");
+  if (material_diffuse_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "material_loc not found\n";
+    return false;
+  }
+
+  material_specular_loc = m_shader->GetUniformLocation("material.specular");
+  if (material_specular_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "material_loc not found\n";
+    return false;
+  }
+
+  material_shininess_loc = m_shader->GetUniformLocation("material.shininess");
+  if (material_shininess_loc == INVALID_UNIFORM_LOCATION) {
+    std::cerr << "material_loc not found\n";
+    return false;
+  }
+
   // Find where vertex attributes are in shader
   m_vertPos = m_shader->GetAttribLocation("v_position");
   m_vertNorm = m_shader->GetAttribLocation("v_normal");
   m_vertText = m_shader->GetAttribLocation("v_texture");
 
   // Create the object
-  sun = std::make_unique<Sphere>("../assets/2k_sun.jpg");
+  sun = std::make_unique<Sphere>("../assets/planetary_textures/2k_sun.jpg");
   sun->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  planet = std::make_unique<Sphere>("../assets/2k_earth_daymap.jpg");
+  planet = std::make_unique<Sphere>(
+      "../assets/planetary_textures/2k_earth_daymap.jpg",
+      "../assets/planetary_textures/2k_earth_daymap-n.jpg");
   planet->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
-  moon = std::make_unique<Sphere>("../assets/2k_moon.jpg");
+  moon = std::make_unique<Sphere>("../assets/planetary_textures/2k_moon.jpg",
+                                  "../assets/planetary_textures/2k_moon-n.jpg");
   moon->Initialize(m_vertPos, m_vertNorm, m_vertText);
 
   ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
@@ -135,14 +180,15 @@ void Graphics::Update(double dt) {
   smat = glm::scale(glm::vec3(0.01f));
   ship->Update(tmat * rmat * smat);
 
-  tmat = glm::translate(glm::mat4(1), glm::vec3(cos(dt) * 4, 0, sin(dt) * 4));
+  tmat = glm::translate(glm::mat4(1),
+                        glm::vec3(cos(dt * 0.2) * 4, 0, sin(dt * 0.2) * 4));
   rmat = glm::rotate(glm::mat4(1), 3 * (float)dt, glm::vec3{0, 1, 0});
   smat = glm::scale(glm::vec3(0.5f));
   planet->Update(tmat * rmat * smat);
 
   tmat = glm::translate(
       glm::mat4(1),
-      glm::vec3(-cos(6 * dt) * 2, sin(dt) * 1.0 / 2.0, -sin(6 * dt) * 2));
+      glm::vec3(-cos(2 * dt) * 2, sin(dt) * 1.0 / 2.0, -sin(2 * dt) * 2));
   rmat = glm::rotate(glm::mat4(1), 3 * (float)dt, glm::vec3{0, 1, 0});
   smat = glm::scale(glm::vec3(0.3f));
   moon->Update(tmat * rmat * smat);
@@ -164,29 +210,41 @@ void Graphics::Render() {
                      glm::value_ptr(m_camera->GetProjection()));
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE,
                      glm::value_ptr(m_camera->GetView()));
+  glUniform3fv(view_pos_loc, 1, glm::value_ptr(m_camera->get_position()));
 
   std::stack<glm::mat4> stack;
   stack.push(glm::mat4(1.0f));
 
   stack.push(stack.top() * sun->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
-  sun->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
-              light_color_loc, is_emissive_loc, true);
+  sun->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, m_sampler2Loc,
+              light_pos_loc, light_color_loc, has_normal_map_loc,
+              material_ambient_loc, material_specular_loc, material_diffuse_loc,
+              material_shininess_loc, is_emissive_loc, true);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * ship->GetModel()));
-  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
-               light_color_loc, is_emissive_loc, false);
+  ship->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, m_sampler2Loc,
+               light_pos_loc, light_color_loc, has_normal_map_loc,
+               material_ambient_loc, material_specular_loc,
+               material_diffuse_loc, material_shininess_loc, is_emissive_loc,
+               false);
 
   stack.push(stack.top() * planet->GetModel());
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(stack.top()));
-  planet->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
-                 light_color_loc, is_emissive_loc, false);
+  planet->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, m_sampler2Loc,
+                 light_pos_loc, light_color_loc, has_normal_map_loc,
+                 material_ambient_loc, material_specular_loc,
+                 material_diffuse_loc, material_shininess_loc, is_emissive_loc,
+                 false);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top() * moon->GetModel()));
-  moon->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, light_pos_loc,
-               light_color_loc, is_emissive_loc, false);
+  moon->Render(m_vertPos, m_vertNorm, m_vertText, m_samplerLoc, m_sampler2Loc,
+               light_pos_loc, light_color_loc, has_normal_map_loc,
+               material_ambient_loc, material_specular_loc,
+               material_diffuse_loc, material_shininess_loc, is_emissive_loc,
+               false);
 
   stack.pop();
   stack.pop();

@@ -1,7 +1,15 @@
 #include "sphere.h"
 #include "texture.h"
 
-Sphere::Sphere(const std::string texture_filename) {
+Sphere::Sphere(const std::string &texture_filename,
+               const std::string &normal_texture_filename) {
+  this->texture = std::make_unique<Texture>(texture_filename);
+  this->normal_texture = std::make_unique<Texture>(normal_texture_filename);
+	this->has_normal_map = true;
+  this->createVertices();
+}
+
+Sphere::Sphere(const std::string &texture_filename) {
   this->texture = std::make_unique<Texture>(texture_filename);
   this->createVertices();
 }
