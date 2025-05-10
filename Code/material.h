@@ -7,9 +7,7 @@ struct Material {
   glm::vec3 specular;
   float shininess;
 
-  Material()
-      : ambient(0.1f, 0.1f, 0.1f), diffuse(1.0f, 0.8f, 0.7f),
-        specular(0.5f, 0.4f, 0.3f), shininess(32) {}
+  Material() : ambient(0.1, 0.1, 0.1), diffuse(1, 1, 1), specular(1, 1, 1), shininess(32) {}
   Material(glm::vec3 a, glm::vec3 d, glm::vec3 s, float sh)
       : ambient(a), diffuse(d), specular(s), shininess(sh) {}
 };

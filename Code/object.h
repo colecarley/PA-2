@@ -35,4 +35,5 @@ protected:
   std::unique_ptr<Texture> normal_texture;
   bool has_normal_map = false;
   Material material;
+	bool is_emissive = false;
 };

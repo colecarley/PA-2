@@ -81,7 +81,7 @@ void Object::Render(GLint posAttribLoc, GLint vertAttribLoc,
   glUniform1i(samplerAttribLoc, 0);
   glUniform1i(is_emissive_loc, is_emissive);
   glUniform3fv(light_pos_loc, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
-  glUniform3fv(light_color_loc, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
+  glUniform3fv(light_color_loc, 1, glm::value_ptr(glm::vec3(1, 0.9, 0.8)));
   glUniform1i(has_normal_map_loc, this->has_normal_map);
 
   glUniform3fv(material_ambient_loc, 1, glm::value_ptr(material.ambient));
