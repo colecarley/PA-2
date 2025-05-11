@@ -4,8 +4,10 @@
 #include "mode.h"
 #include "ring.h"
 #include "sphere.h"
+#include <exception>
 #include <memory>
 #include <stack>
+#include <stdexcept>
 
 Graphics::Graphics() {}
 Graphics::~Graphics() {}
@@ -272,12 +274,36 @@ void Graphics::updateOrbitalBody(std::unique_ptr<Object> &obj, double dt,
   obj->Update(tmat * rmat * smat);
 }
 
-void Graphics::Update(double dt, Mode mode) {
+std::unique_ptr<Object> &Graphics::get_planet_model(Planet focused_planet) {
+  switch (focused_planet) {
+  case MERCURY:
+    return this->mercury;
+  case VENUS:
+    return this->venus;
+  case EARTH:
+    return this->earth;
+  case MARS:
+    return this->mars;
+  case JUPITER:
+    return this->jupiter;
+  case SATURN:
+    return this->saturn;
+  case URANUS:
+    return this->uranus;
+  case NEPTUNE:
+    return this->neptune;
+  default:
+    throw std::invalid_argument("Invalid planet");
+  }
+}
+
+void Graphics::Update(double dt, Mode mode, Planet focused_planet) {
   glm::mat4 tmat, rmat, smat;
 
   if (mode == PLANETARY_OBSERVATION) {
     float cam_orbit_radius = 1.5f;
-    glm::vec3 earth_pos = glm::vec3((sun->GetModel() * earth->GetModel())[3]);
+    glm::vec3 earth_pos = glm::vec3(
+        (sun->GetModel() * get_planet_model(focused_planet)->GetModel())[3]);
     glm::vec3 camera_offset = glm::vec3{cam_orbit_radius, 0, 0};
     glm::vec3 camera_pos = earth_pos + camera_offset;
 
@@ -311,8 +337,8 @@ void Graphics::Update(double dt, Mode mode) {
   updateOrbitalBody(jupiter, dt, SolarSystem::Jupiter);
   updateOrbitalBody(io, dt, SolarSystem::Io);
   updateOrbitalBody(saturn, dt, SolarSystem::Saturn);
-  updateOrbitalBody(saturn_ring, dt,
-                    SolarSystem::Saturn); // same transform as saturn
+  // same transform as saturn
+  updateOrbitalBody(saturn_ring, dt, SolarSystem::Saturn);
   updateOrbitalBody(titan, dt, SolarSystem::Titan);
   updateOrbitalBody(uranus, dt, SolarSystem::Uranus);
   updateOrbitalBody(neptune, dt, SolarSystem::Neptune);

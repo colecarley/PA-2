@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "graphics_headers.h"
 #include "mode.h"
 #include "window.h"
 #include <memory>
@@ -103,24 +104,67 @@ void Engine::ProcessInput() {
 
   if (this->mode == EXPLORATION) {
     const float dt = getDt();
+    int w_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W);
+    int s_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S);
+    int a_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A);
+    int d_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D);
 
-    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_W) == GLFW_PRESS) {
+    if (w_key == GLFW_PRESS) {
       delta += speed * camera_front * dt;
     }
-    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_S) == GLFW_PRESS) {
+    if (s_key == GLFW_PRESS) {
       delta -= speed * camera_front * dt;
     }
-    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A) == GLFW_PRESS) {
+    if (a_key == GLFW_PRESS) {
       delta -= speed * norm_cross * dt;
     }
-    if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D) == GLFW_PRESS) {
+    if (d_key == GLFW_PRESS) {
       delta += speed * norm_cross * dt;
     }
   }
 
+  if (this->mode == PLANETARY_OBSERVATION) {
+    int left_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_LEFT);
+    int right_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_RIGHT);
+
+    if (left_key == GLFW_PRESS &&
+        pressed_keys.find(GLFW_KEY_LEFT) == pressed_keys.end()) {
+      this->pressed_keys.insert(GLFW_KEY_LEFT);
+      this->focused_planet =
+          (Planet)(((int)this->focused_planet - 1) % num_planets);
+      if (this->focused_planet < 0) {
+        this->focused_planet =
+            (Planet)((int)this->focused_planet + num_planets);
+      }
+      std::cout << (int)focused_planet << std::endl;
+    }
+    if (right_key == GLFW_PRESS &&
+        pressed_keys.find(GLFW_KEY_RIGHT) == pressed_keys.end()) {
+      this->pressed_keys.insert(GLFW_KEY_RIGHT);
+      this->focused_planet =
+          (Planet)(((int)this->focused_planet + 1) % num_planets);
+      std::cout << (int)focused_planet << std::endl;
+    }
+
+    if (left_key == GLFW_RELEASE) {
+      pressed_keys.erase(GLFW_KEY_LEFT);
+    }
+    if (right_key == GLFW_RELEASE) {
+      pressed_keys.erase(GLFW_KEY_RIGHT);
+    }
+  }
+
   this->m_graphics->getCamera()->update_look_at(delta, pitch, yaw);
-  if (glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ENTER) == GLFW_PRESS) {
+  int enter_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_ENTER);
+
+  if (enter_key == GLFW_PRESS &&
+      pressed_keys.find(GLFW_KEY_ENTER) == pressed_keys.end()) {
+    pressed_keys.insert(GLFW_KEY_ENTER);
     this->switch_modes();
+  }
+
+  if (enter_key == GLFW_RELEASE) {
+    pressed_keys.erase(GLFW_KEY_ENTER);
   }
 }
 
@@ -133,7 +177,7 @@ void Engine::Display(std::unique_ptr<GLFWwindow, DestroyglfwWin> &window,
   m_window->Swap();
 
   // update the graphics
-  m_graphics->Update(time, this->mode);
+  m_graphics->Update(time, mode, focused_planet);
 }
 float Engine::getDt() {
   double now = glfwGetTime();
