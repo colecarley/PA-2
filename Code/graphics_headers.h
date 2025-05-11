@@ -8,7 +8,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <OpenGL/glu.h>
+#include <OpenGL/glu.h> // <GL/glu.h> for windows (note)
 
 // GLM for matricies
 #define GLM_FORCE_RADIANS
@@ -19,6 +19,10 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
+// For windows
+#ifndef M_PI
+#define M_PI 3.1415926535
+#endif // M_PI
 
 struct Vertex {
   glm::vec3 position;

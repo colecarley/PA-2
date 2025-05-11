@@ -20,7 +20,7 @@ public:
               bool is_emissive);
   glm::mat4 GetModel();
   void set_material(Material m);
-
+   
 protected:
   virtual void createVertices() = 0;
   glm::mat4 model;

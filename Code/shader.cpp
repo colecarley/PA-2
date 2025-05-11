@@ -70,6 +70,10 @@ bool Shader::AddShader(GLenum ShaderType) {
       layout (location = 0) in vec3 v_position; \
       layout (location = 1) in vec3 v_normal; \
       layout (location = 2) in vec2 v_texture; \
+      layout (location = 3) in vec4 instance_mat_0; \
+      layout(location = 4) in vec4 instance_mat_1; \
+      layout(location = 5) in vec4 instance_mat_2; \
+      layout(location = 6) in vec4 instance_mat_3; \
       \
 			out vec3 norm; \
 			out vec2 tex_coord; \
@@ -78,14 +82,17 @@ bool Shader::AddShader(GLenum ShaderType) {
       uniform mat4 projection; \
       uniform mat4 view; \
       uniform mat4 model; \
+      uniform bool use_instancing; \
       \
       void main(void) \
       { \
+        mat4 instance_mat = mat4(instance_mat_0, instance_mat_1, instance_mat_2, instance_mat_3); \
+        mat4 local_model = use_instancing ? instance_mat : model;\
         vec4 v = vec4(v_position, 1.0); \
-        gl_Position = (projection * view * model) * v; \
-				tex_coord = v_texture; \
-				norm = mat3(transpose(inverse(model))) * v_normal; \
-				frag_pos = vec3(model * v);\
+        gl_Position = (projection * view * local_model) * v; \
+		tex_coord = v_texture; \
+		norm = mat3(transpose(inverse(local_model))) * v_normal; \
+		frag_pos = vec3(local_model * v);\
       } \
     ";
   } else if (ShaderType == GL_FRAGMENT_SHADER) {
