@@ -58,6 +58,7 @@ bool Engine::Initialize() {
     printf("The window failed to initialize.\n");
     return false;
   }
+  glfwSetInputMode(m_window->getWindow().get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glfwSetWindowUserPointer(this->m_window->getWindow().get(), this);
   glfwSetScrollCallback(this->m_window->getWindow().get(), this->on_scroll);
@@ -77,7 +78,6 @@ bool Engine::Initialize() {
 
 void Engine::Run() {
   m_running = true;
-
   while (!glfwWindowShouldClose(m_window->getWindow().get())) {
     ProcessInput();
     Display(m_window->getWindow(), glfwGetTime());

@@ -1,5 +1,5 @@
 #include "skybox.h"
-#include "/usr/local/include/soil2/SOIL2.h"
+#include "/usr/local/include/soil2/SOIL2.h" // <SOIL2/SOIL2.h> for windows
 #include "graphics_headers.h"
 #include <cstdlib>
 
