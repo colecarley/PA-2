@@ -21,6 +21,11 @@ struct ShaderVariableLocations {
   GLint material_diffuse_loc;
   GLint material_shininess_loc;
   GLint use_instancing_loc;
+  GLint instance_mat_0;
+  GLint instance_mat_1;
+  GLint instance_mat_2;
+  GLint instance_mat_3;
+
   ShaderVariableLocations() = default;
   void print() {
     std::cout << "projection matrix location: " << m_projectionMatrix

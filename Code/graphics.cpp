@@ -157,6 +157,14 @@ bool Graphics::Initialize(int width, int height) {
   shader_var_locs.m_vertPos = m_shader->GetAttribLocation("v_position");
   shader_var_locs.m_vertNorm = m_shader->GetAttribLocation("v_normal");
   shader_var_locs.m_vertText = m_shader->GetAttribLocation("v_texture");
+  shader_var_locs.instance_mat_0 =
+      m_shader->GetAttribLocation("instance_mat_0");
+  shader_var_locs.instance_mat_1 =
+      m_shader->GetAttribLocation("instance_mat_1");
+  shader_var_locs.instance_mat_2 =
+      m_shader->GetAttribLocation("instance_mat_2");
+  shader_var_locs.instance_mat_3 =
+      m_shader->GetAttribLocation("instance_mat_3");
 
   // Create objects
 
@@ -268,13 +276,9 @@ void Graphics::Update(double dt, Mode mode) {
   glm::mat4 tmat, rmat, smat;
 
   if (mode == PLANETARY_OBSERVATION) {
-    float cam_orbit_radius = 1.0f;
-    float cam_orbit_speed = 0.2f;
+    float cam_orbit_radius = 1.5f;
     glm::vec3 earth_pos = glm::vec3((sun->GetModel() * earth->GetModel())[3]);
-    glm::vec3 camera_offset =
-        glm::vec3{cos(dt * cam_orbit_speed) * cam_orbit_radius,
-                  1.0f, // slightly above
-                  sin(dt * cam_orbit_speed) * cam_orbit_radius};
+    glm::vec3 camera_offset = glm::vec3{cam_orbit_radius, 0, 0};
     glm::vec3 camera_pos = earth_pos + camera_offset;
 
     this->m_camera->set_position(camera_pos);
@@ -297,7 +301,6 @@ void Graphics::Update(double dt, Mode mode) {
   }
 
   // Celestial Bodies
-
   updateOrbitalBody(sun, dt, SolarSystem::Sun);
   updateOrbitalBody(mercury, dt, SolarSystem::Mercury);
   updateOrbitalBody(venus, dt, SolarSystem::Venus);
