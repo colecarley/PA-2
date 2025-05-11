@@ -1,6 +1,7 @@
 #pragma once
 #include "graphics_headers.h"
 #include "material.h"
+#include "shader_variable_locations.h"
 #include "texture.h"
 #include <memory>
 #include <vector>
@@ -9,18 +10,12 @@ class Object {
 public:
   Object() = default;
   virtual ~Object();
-  void Initialize(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc);
+  void Initialize(const ShaderVariableLocations &);
   void Update(glm::mat4 model_matrix);
-  void Render(GLint posAttribLoc, GLint vertAttribLoc, GLint textAttribLoc,
-              GLint samplerAttribLoc, GLint sampler2AttribLoc,
-              GLint light_pos_loc, GLint light_color_loc,
-              GLint has_normal_map_loc, GLint material_ambient_loc,
-              GLint material_specular_loc, GLint material_diffuse_loc,
-              GLint material_shininess_loc, GLint is_emissive_loc,
-              bool is_emissive);
+  void Render(const ShaderVariableLocations &, bool is_emissive = false);
   glm::mat4 GetModel();
   void set_material(Material m);
-   
+
 protected:
   virtual void createVertices() = 0;
   glm::mat4 model;
@@ -35,5 +30,5 @@ protected:
   std::unique_ptr<Texture> normal_texture;
   bool has_normal_map = false;
   Material material;
-	bool is_emissive = false;
+  bool is_emissive = false;
 };

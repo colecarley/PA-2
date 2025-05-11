@@ -14,6 +14,10 @@ void Mesh::createVertices() {
   Assimp::Importer importer;
   const aiScene *scene =
       importer.ReadFile(mesh_file_path, aiProcess_Triangulate);
+  if (scene == nullptr) {
+    std::cerr << "failed to initialize mesh: "  << mesh_file_path << std::endl;
+    return;
+  }
 
   aiMesh *mesh = scene->mMeshes[0];
 

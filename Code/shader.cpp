@@ -90,9 +90,9 @@ bool Shader::AddShader(GLenum ShaderType) {
         mat4 local_model = use_instancing ? instance_mat : model;\
         vec4 v = vec4(v_position, 1.0); \
         gl_Position = (projection * view * local_model) * v; \
-		tex_coord = v_texture; \
-		norm = mat3(transpose(inverse(local_model))) * v_normal; \
-		frag_pos = vec3(local_model * v);\
+				tex_coord = v_texture; \
+				norm = mat3(transpose(inverse(local_model))) * v_normal; \
+				frag_pos = vec3(local_model * v);\
       } \
     ";
   } else if (ShaderType == GL_FRAGMENT_SHADER) {

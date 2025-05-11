@@ -54,11 +54,13 @@ bool Engine::Initialize() {
   // Start a window
   m_window = std::make_unique<Window>(m_WINDOW_NAME, &m_WINDOW_WIDTH,
                                       &m_WINDOW_HEIGHT);
+
   if (!m_window->Initialize()) {
     printf("The window failed to initialize.\n");
     return false;
   }
-  glfwSetInputMode(m_window->getWindow().get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetInputMode(m_window->getWindow().get(), GLFW_CURSOR,
+                   GLFW_CURSOR_DISABLED);
 
   glfwSetWindowUserPointer(this->m_window->getWindow().get(), this);
   glfwSetScrollCallback(this->m_window->getWindow().get(), this->on_scroll);
@@ -67,6 +69,7 @@ bool Engine::Initialize() {
 
   // Start the graphics
   m_graphics = std::make_unique<Graphics>();
+
   if (!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT)) {
     printf("The graphics failed to initialize.\n");
     return false;

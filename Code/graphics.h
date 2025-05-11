@@ -1,13 +1,14 @@
 #pragma once
 
+#include "asteroid_belt.h"
 #include "camera.h"
 #include "graphics_headers.h"
-#include "solar_constants.h"
 #include "mode.h"
 #include "object.h"
 #include "shader.h"
+#include "shader_variable_locations.h"
 #include "skybox.h"
-#include "asteroid_belt.h"
+#include "solar_constants.h"
 #include <memory>
 #include <vector>
 
@@ -22,37 +23,38 @@ public:
   std::unique_ptr<Camera> &getCamera();
 
 private:
-  void updateOrbitalBody(Object* obj, double dt, const OrbitalBody& body);
+  void updateOrbitalBody(std::unique_ptr<Object> &obj, double dt,
+                         const OrbitalBody &body);
 
   std::string ErrorString(GLenum error);
 
   std::unique_ptr<Camera> m_camera;
   std::unique_ptr<Shader> m_shader;
 
-  GLint m_projectionMatrix;
-  GLint m_viewMatrix;
-  GLint m_modelMatrix;
-  GLint m_vertPos;
-  GLint m_vertNorm;
-  GLint m_vertText;
-  GLint m_samplerLoc;
-  GLint m_sampler2Loc;
-  GLint is_emissive_loc;
-  GLint light_pos_loc;
-  GLint light_color_loc;
-  GLint view_pos_loc;
-  GLint has_normal_map_loc;
-  GLint material_ambient_loc;
-  GLint material_specular_loc;
-  GLint material_diffuse_loc;
-  GLint material_shininess_loc;
-  GLint use_instancing_loc;
+  // GLint m_projectionMatrix;
+  // GLint m_viewMatrix;
+  // GLint m_modelMatrix;
+  // GLint m_vertPos;
+  // GLint m_vertNorm;
+  // GLint m_vertText;
+  // GLint m_samplerLoc;
+  // GLint m_sampler2Loc;
+  // GLint is_emissive_loc;
+  // GLint light_pos_loc;
+  // GLint light_color_loc;
+  // GLint view_pos_loc;
+  // GLint has_normal_map_loc;
+  // GLint material_ambient_loc;
+  // GLint material_specular_loc;
+  // GLint material_diffuse_loc;
+  // GLint material_shininess_loc;
+  // GLint use_instancing_loc;
+  ShaderVariableLocations shader_var_locs;
 
   std::unique_ptr<Object> ship;
 
   std::shared_ptr<Object> asteroid;
   std::unique_ptr<AsteroidBelt> asteroid_belt;
-
 
   std::unique_ptr<Object> sun;
   std::unique_ptr<Object> mercury;
