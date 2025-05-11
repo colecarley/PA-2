@@ -28,6 +28,10 @@ add_executable(graphics Code/main.cpp
 												Code/skybox.cpp
 												Code/material.h
 												Code/mode.h
+												Code/ring.h
+												Code/ring.cpp
+												Code/asteroid_belt.cpp
+												Code/asteroid_belt.h
                         )
 
 target_compile_options(graphics PUBLIC -Wall -Wpedantic) 
