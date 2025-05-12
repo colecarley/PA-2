@@ -171,11 +171,14 @@ bool Graphics::Initialize(int width, int height) {
   // Create objects
 
   asteroid = std::make_shared<Mesh>("../assets/Asteroid2.obj",
-      "../assets/Asteroid.jpg");
+                                    "../assets/Asteroid.jpg");
+  asteroid->set_material(Material{glm::vec3{0.1, 0.1, 0.1},
+                                  glm::vec3{0.5, 0.5, 0.5},
+                                  glm::vec3{0.2, 0.2, 0.2}, 16.0f});
   asteroid->Initialize(shader_var_locs);
 
-  asteroid_belt = std::make_unique<AsteroidBelt>(
-      asteroid, SolarSystem::MainAsteroidBelt);
+  asteroid_belt =
+      std::make_unique<AsteroidBelt>(asteroid, SolarSystem::MainAsteroidBelt);
   asteroid_belt->Initialize();
 
   ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
@@ -369,7 +372,6 @@ void Graphics::Render(Mode mode) {
     ship->Render(shader_var_locs);
   }
 
-
   // Hierarchical Updates
 
   std::stack<glm::mat4> stack;
@@ -473,11 +475,8 @@ void Graphics::Render(Mode mode) {
   glBindTexture(GL_TEXTURE_2D, asteroid->getTextureID());
   glUniform1i(shader_var_locs.m_samplerLoc, 0);
 
-  asteroid_belt->Render(shader_var_locs.m_projectionMatrix,
-      shader_var_locs.m_viewMatrix,
-      shader_var_locs.use_instancing_loc,
-      m_camera->GetProjection(),
-      m_camera->GetView());
+  asteroid_belt->Render(shader_var_locs, m_camera->GetProjection(),
+                        m_camera->GetView());
 
   glUniform1i(shader_var_locs.use_instancing_loc, 0); // disable use_instancing
 

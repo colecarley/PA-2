@@ -34,8 +34,6 @@ void Object::Initialize(const ShaderVariableLocations &locs) {
   float tvec2 = glm::linearRand(-5.f, 5.f);
   float tvec3 = glm::linearRand(-2.f, 2.f);
 
-  
-
   // apply translation to identify matrix, assign to model
   model = glm::translate(glm::mat4(1.0f), glm::vec3(tvec1, tvec2, tvec3));
 
@@ -48,9 +46,9 @@ void Object::Initialize(const ShaderVariableLocations &locs) {
   model *= glm::rotate(glm::mat4(1.0f), angle, axis);
 
   // Enable vertex arr, never disable
-  glEnableVertexAttribArray(locs.m_vertPos);   // location 0
-  glEnableVertexAttribArray(locs.m_vertNorm);  // location 1
-  glEnableVertexAttribArray(locs.m_vertText);  // location 2
+  glEnableVertexAttribArray(locs.m_vertPos);  // location 0
+  glEnableVertexAttribArray(locs.m_vertNorm); // location 1
+  glEnableVertexAttribArray(locs.m_vertText); // location 2
 
   glBindVertexArray(0);
 }
@@ -77,7 +75,6 @@ void Object::Render(const ShaderVariableLocations &locs, bool is_emissive) {
   glBindBuffer(GL_ARRAY_BUFFER, VB);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
-
   glUniform1i(locs.m_samplerLoc, 0);
   glUniform1i(locs.is_emissive_loc, is_emissive);
   glUniform3fv(locs.light_pos_loc, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
@@ -103,9 +100,9 @@ void Object::Render(const ShaderVariableLocations &locs, bool is_emissive) {
   glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
 
   //// disable the vertex attributes
-  //glDisableVertexAttribArray(locs.m_vertPos);
-  //glDisableVertexAttribArray(locs.m_vertNorm);
-  //glDisableVertexAttribArray(locs.m_vertText);
+  // glDisableVertexAttribArray(locs.m_vertPos);
+  // glDisableVertexAttribArray(locs.m_vertNorm);
+  // glDisableVertexAttribArray(locs.m_vertText);
 
   // unbind VBO(s) and ElementBuffer(s)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -113,3 +110,5 @@ void Object::Render(const ShaderVariableLocations &locs, bool is_emissive) {
 }
 
 void Object::set_material(Material m) { this->material = m; }
+
+Material &Object::get_material() { return this->material; }
