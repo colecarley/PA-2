@@ -39,7 +39,7 @@ private:
   bool first_mouse = true;
   std::unordered_set<int> pressed_keys;
 
-      std::unique_ptr<Graphics> m_graphics;
+  std::unique_ptr<Graphics> m_graphics;
   Mode mode = PLANETARY_OBSERVATION;
   Planet focused_planet = EARTH;
 

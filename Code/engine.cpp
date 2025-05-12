@@ -136,14 +136,12 @@ void Engine::ProcessInput() {
         this->focused_planet =
             (Planet)((int)this->focused_planet + num_planets);
       }
-      std::cout << (int)focused_planet << std::endl;
     }
     if (right_key == GLFW_PRESS &&
         pressed_keys.find(GLFW_KEY_RIGHT) == pressed_keys.end()) {
       this->pressed_keys.insert(GLFW_KEY_RIGHT);
       this->focused_planet =
           (Planet)(((int)this->focused_planet + 1) % num_planets);
-      std::cout << (int)focused_planet << std::endl;
     }
 
     if (left_key == GLFW_RELEASE) {
