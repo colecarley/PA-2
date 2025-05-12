@@ -118,6 +118,8 @@ const OrbitalBody Moon = {MOON_ORBIT_SPEED,
                           MOON_SPIN_SPEED,
                           MOON_RADIUS,
                           MOON_SCALE,
+                          0.0f,
+                          0.0f,
                           true,
                           0.5f,
                           true}; // Earth's Moon
