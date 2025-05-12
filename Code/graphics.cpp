@@ -178,6 +178,12 @@ bool Graphics::Initialize(int width, int height) {
       asteroid, SolarSystem::MainAsteroidBelt);
   asteroid_belt->Initialize();
 
+  
+  halley = std::make_unique<Mesh>("../assets/halley.obj",
+        "../assets/planetary_textures/comet.jpg");//ss
+  halley->Initialize(shader_var_locs);
+
+
   ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
                                 "../assets/SpaceShip-1.png");
   ship->Initialize(shader_var_locs);
@@ -251,26 +257,39 @@ bool Graphics::Initialize(int width, int height) {
 
   return true;
 }
+void Graphics::updateOrbitalBody(std::unique_ptr<Object>& obj,
+    double               dt,
+    const OrbitalBody& body)
+{
+    float orbitAngle = static_cast<float>(dt) * body.orbit_speed;
+    float spinAngle = static_cast<float>(dt) * body.spin_speed;
 
-void Graphics::updateOrbitalBody(std::unique_ptr<Object> &obj, double dt,
-                                 const OrbitalBody &body) {
-  float orbit_angle = (float)dt * body.orbit_speed;
-  float spin_angle = (float)dt * body.spin_speed;
+    float a = body.orbit_radius;                 
+    float b = a * (1.f - body.eccentricity);      
 
-  // Handle orbit direction (e.g., Moon uses negative cosine/sine)
-  float x = body.use_negative_orbit ? -cos(orbit_angle) : cos(orbit_angle);
-  float z = body.use_negative_orbit ? -sin(orbit_angle) : sin(orbit_angle);
-  float y = sin((float)dt) * body.vertical_oscillation_amplitude;
+    float cosA = cos(orbitAngle);
+    float sinA = sin(orbitAngle);//f
+    if (body.use_negative_orbit) { cosA = -cosA; sinA = -sinA; }
 
-  glm::mat4 tmat = glm::translate(
-      glm::mat4(1), glm::vec3(x * body.orbit_radius, y, z * body.orbit_radius));
-  glm::mat4 rmat = body.skip_spin ? glm::mat4(1)
-                                  : glm::rotate(glm::mat4(1), spin_angle,
-                                                glm::vec3(0, 1, 0));
-  glm::mat4 smat = glm::scale(glm::vec3(body.scale));
+    glm::vec3 pos(a * cosA,
+        sin(static_cast<float>(dt)) * body.vertical_oscillation_amplitude,
+        b * sinA);
 
-  obj->Update(tmat * rmat * smat);
+    glm::mat4 tMat = glm::translate(glm::mat4(1.f), pos);
+
+    glm::mat4 tilt = glm::rotate(glm::mat4(1.f),
+        glm::radians(body.axial_tilt_deg),
+        glm::vec3(0.f, 0.f, 1.f));  
+
+    glm::mat4 spin = body.skip_spin
+        ? glm::mat4(1.f)
+        : glm::rotate(glm::mat4(1.f), spinAngle, glm::vec3(0.f, 1.f, 0.f));
+
+    glm::mat4 scale = glm::scale(glm::vec3(body.scale));
+
+    obj->Update(tMat * tilt * spin * scale);
 }
+
 
 std::unique_ptr<Object> &Graphics::get_planet_model(Planet focused_planet) {
   switch (focused_planet) {
@@ -340,6 +359,9 @@ void Graphics::Update(double dt, Mode mode, Planet focused_planet) {
   updateOrbitalBody(titan, dt, SolarSystem::Titan);
   updateOrbitalBody(uranus, dt, SolarSystem::Uranus);
   updateOrbitalBody(neptune, dt, SolarSystem::Neptune);
+
+  updateOrbitalBody(halley, dt, SolarSystem::Halley);
+
 }
 
 void Graphics::Render(Mode mode) {
@@ -460,6 +482,15 @@ void Graphics::Render(Mode mode) {
   glUniformMatrix4fv(shader_var_locs.m_modelMatrix, 1, GL_FALSE,
                      glm::value_ptr(stack.top()));
   neptune->Render(shader_var_locs);
+  stack.pop();
+
+
+  //Halley
+  stack.push(stack.top() * halley->GetModel());
+  glUniformMatrix4fv(shader_var_locs.m_modelMatrix, 1, GL_FALSE,
+      glm::value_ptr(stack.top()));
+  halley->Render(shader_var_locs);
+
   stack.pop();
 
   stack.pop(); // Sun

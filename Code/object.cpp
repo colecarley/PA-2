@@ -77,7 +77,6 @@ void Object::Render(const ShaderVariableLocations &locs, bool is_emissive) {
   glBindBuffer(GL_ARRAY_BUFFER, VB);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
-
   glUniform1i(locs.m_samplerLoc, 0);
   glUniform1i(locs.is_emissive_loc, is_emissive);
   glUniform3fv(locs.light_pos_loc, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
@@ -102,10 +101,6 @@ void Object::Render(const ShaderVariableLocations &locs, bool is_emissive) {
   // draw call to OpenGL
   glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
 
-  //// disable the vertex attributes
-  //glDisableVertexAttribArray(locs.m_vertPos);
-  //glDisableVertexAttribArray(locs.m_vertNorm);
-  //glDisableVertexAttribArray(locs.m_vertText);
 
   // unbind VBO(s) and ElementBuffer(s)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
