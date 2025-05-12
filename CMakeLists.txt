@@ -34,6 +34,8 @@ add_executable(graphics Code/main.cpp
 												Code/asteroid_belt.h
 												Code/solar_constants.h
 												Code/shader_variable_locations.h
+												Code/line.cpp
+												Code/line.h
                         )
 
 target_compile_options(graphics PUBLIC -Wall -Wpedantic) 

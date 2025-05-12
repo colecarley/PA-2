@@ -190,15 +190,19 @@ bool Graphics::Initialize(int width, int height) {
       std::make_unique<Sphere>("../assets/planetary_textures/Mercury.jpg",
                                "../assets/planetary_textures/Mercury-n.jpg");
   mercury->Initialize(shader_var_locs);
+  mercury_line = std::make_unique<Line>(1000);
 
   venus = std::make_unique<Sphere>("../assets/planetary_textures/Venus.jpg",
                                    "../assets/planetary_textures/Venus-n.jpg");
+
+  venus_line = std::make_unique<Line>(1000);
   venus->Initialize(shader_var_locs);
 
   earth = std::make_unique<Sphere>(
       "../assets/planetary_textures/2k_earth_daymap.jpg",
       "../assets/planetary_textures/2k_earth_daymap-n.jpg");
   earth->Initialize(shader_var_locs);
+  earth_line = std::make_unique<Line>(1000);
 
   moon = std::make_unique<Sphere>("../assets/planetary_textures/2k_moon.jpg",
                                   "../assets/planetary_textures/2k_moon-n.jpg");
@@ -207,6 +211,7 @@ bool Graphics::Initialize(int width, int height) {
   mars = std::make_unique<Sphere>("../assets/planetary_textures/Mars.jpg",
                                   "../assets/planetary_textures/Mars-n.jpg");
   mars->Initialize(shader_var_locs);
+  mars_line = std::make_unique<Line>(1000);
 
   phobos =
       std::make_unique<Sphere>("../assets/planetary_textures/Phobos.jpg",
@@ -217,6 +222,7 @@ bool Graphics::Initialize(int width, int height) {
       std::make_unique<Sphere>("../assets/planetary_textures/Jupiter.jpg",
                                "../assets/planetary_textures/Jupiter-n.jpg");
   jupiter->Initialize(shader_var_locs);
+  jupiter_line = std::make_unique<Line>(1000);
 
   io = std::make_unique<Sphere>("../assets/planetary_textures/Io.jpg",
                                 "../assets/planetary_textures/Io-n.jpg");
@@ -226,6 +232,7 @@ bool Graphics::Initialize(int width, int height) {
       std::make_unique<Sphere>("../assets/planetary_textures/Saturn.jpg",
                                "../assets/planetary_textures/Saturn-n.jpg");
   saturn->Initialize(shader_var_locs);
+  saturn_line = std::make_unique<Line>(1000);
 
   saturn_ring =
       std::make_unique<Ring>("../assets/planetary_textures/Saturn_ring.jpg",
@@ -240,11 +247,13 @@ bool Graphics::Initialize(int width, int height) {
       std::make_unique<Sphere>("../assets/planetary_textures/Uranus.jpg",
                                "../assets/planetary_textures/Uranus-n.jpg");
   uranus->Initialize(shader_var_locs);
+  uranus_line = std::make_unique<Line>(1000);
 
   neptune =
       std::make_unique<Sphere>("../assets/planetary_textures/Neptune.jpg",
                                "../assets/planetary_textures/Neptune-n.jpg");
   neptune->Initialize(shader_var_locs);
+  neptune_line = std::make_unique<Line>(1000);
 
   // enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -328,19 +337,32 @@ void Graphics::Update(double dt, Mode mode, Planet focused_planet) {
   // Celestial Bodies
   updateOrbitalBody(sun, dt, SolarSystem::Sun);
   updateOrbitalBody(mercury, dt, SolarSystem::Mercury);
+  mercury_line->add_position(
+      glm::vec3((sun->GetModel() * mercury->GetModel())[3]));
   updateOrbitalBody(venus, dt, SolarSystem::Venus);
+  venus_line->add_position(glm::vec3((sun->GetModel() * venus->GetModel())[3]));
   updateOrbitalBody(earth, dt, SolarSystem::Earth);
+  earth_line->add_position(glm::vec3((sun->GetModel() * earth->GetModel())[3]));
   updateOrbitalBody(moon, dt, SolarSystem::Moon);
   updateOrbitalBody(mars, dt, SolarSystem::Mars);
+  mars_line->add_position(glm::vec3((sun->GetModel() * mars->GetModel())[3]));
   updateOrbitalBody(phobos, dt, SolarSystem::Phobos);
   updateOrbitalBody(jupiter, dt, SolarSystem::Jupiter);
+  jupiter_line->add_position(
+      glm::vec3((sun->GetModel() * jupiter->GetModel())[3]));
   updateOrbitalBody(io, dt, SolarSystem::Io);
   updateOrbitalBody(saturn, dt, SolarSystem::Saturn);
+  saturn_line->add_position(
+      glm::vec3((sun->GetModel() * saturn->GetModel())[3]));
   // same transform as saturn
   updateOrbitalBody(saturn_ring, dt, SolarSystem::Saturn);
   updateOrbitalBody(titan, dt, SolarSystem::Titan);
   updateOrbitalBody(uranus, dt, SolarSystem::Uranus);
+  uranus_line->add_position(
+      glm::vec3((sun->GetModel() * uranus->GetModel())[3]));
   updateOrbitalBody(neptune, dt, SolarSystem::Neptune);
+  neptune_line->add_position(
+      glm::vec3((sun->GetModel() * neptune->GetModel())[3]));
 }
 
 void Graphics::Render(Mode mode) {
@@ -478,6 +500,16 @@ void Graphics::Render(Mode mode) {
 
   glUniform1i(shader_var_locs.use_instancing_loc, 0); // disable use_instancing
 
+  if (mode == EXPLORATION) {
+    earth_line->render(m_camera->GetProjection(), m_camera->GetView());
+    mercury_line->render(m_camera->GetProjection(), m_camera->GetView());
+    venus_line->render(m_camera->GetProjection(), m_camera->GetView());
+    mars_line->render(m_camera->GetProjection(), m_camera->GetView());
+    jupiter_line->render(m_camera->GetProjection(), m_camera->GetView());
+    saturn_line->render(m_camera->GetProjection(), m_camera->GetView());
+    uranus_line->render(m_camera->GetProjection(), m_camera->GetView());
+    neptune_line->render(m_camera->GetProjection(), m_camera->GetView());
+  }
   // Get any errors from OpenGL
   auto error = glGetError();
   if (error != GL_NO_ERROR) {

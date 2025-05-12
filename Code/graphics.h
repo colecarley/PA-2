@@ -3,6 +3,7 @@
 #include "asteroid_belt.h"
 #include "camera.h"
 #include "graphics_headers.h"
+#include "line.h"
 #include "mode.h"
 #include "object.h"
 #include "shader.h"
@@ -49,6 +50,15 @@ private:
   std::unique_ptr<Object> titan; // asturn moon
   std::unique_ptr<Object> uranus;
   std::unique_ptr<Object> neptune;
+
+  std::unique_ptr<Line> earth_line;
+  std::unique_ptr<Line> mercury_line;
+  std::unique_ptr<Line> venus_line;
+  std::unique_ptr<Line> mars_line;
+  std::unique_ptr<Line> jupiter_line;
+  std::unique_ptr<Line> saturn_line;
+  std::unique_ptr<Line> uranus_line;
+  std::unique_ptr<Line> neptune_line;
 
   std::unique_ptr<Shader> skybox_shader;
   std::unique_ptr<Skybox> skybox;
