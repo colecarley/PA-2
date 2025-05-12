@@ -179,7 +179,6 @@ bool Graphics::Initialize(int width, int height) {
       std::make_unique<AsteroidBelt>(asteroid, SolarSystem::MainAsteroidBelt);
   asteroid_belt->Initialize();
 
-
   ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
                                 "../assets/SpaceShip-1.png");
   ship->Initialize(shader_var_locs);
@@ -256,8 +255,9 @@ bool Graphics::Initialize(int width, int height) {
   neptune->Initialize(shader_var_locs);
   neptune_line = std::make_unique<Line>(1000);
 
-  halley = std::make_unique<Mesh>("../assets/halley.obj",
-      "../assets/planetary_textures/comet.jpg");//ss
+  halley =
+      std::make_unique<Mesh>("../assets/halley.obj",
+                             "../assets/planetary_textures/comet.jpg"); // ss
   halley->Initialize(shader_var_locs);
   halley_line = std::make_unique<Line>(1000);
 
@@ -267,39 +267,40 @@ bool Graphics::Initialize(int width, int height) {
 
   return true;
 }
-void Graphics::updateOrbitalBody(std::unique_ptr<Object>& obj,
-    double               dt,
-    const OrbitalBody& body)
-{
-    float orbitAngle = static_cast<float>(dt) * body.orbit_speed;
-    float spinAngle = static_cast<float>(dt) * body.spin_speed;
+void Graphics::updateOrbitalBody(std::unique_ptr<Object> &obj, double dt,
+                                 const OrbitalBody &body) {
+  float orbitAngle = static_cast<float>(dt) * body.orbit_speed;
+  float spinAngle = static_cast<float>(dt) * body.spin_speed;
 
-    float a = body.orbit_radius;                 
-    float b = a * (1.f - body.eccentricity);      
+  float a = body.orbit_radius;
+  float b = a * (1.f - body.eccentricity);
 
-    float cosA = cos(orbitAngle);
-    float sinA = sin(orbitAngle);//f
-    if (body.use_negative_orbit) { cosA = -cosA; sinA = -sinA; }
+  float cosA = cos(orbitAngle);
+  float sinA = sin(orbitAngle); // f
+  if (body.use_negative_orbit) {
+    cosA = -cosA;
+    sinA = -sinA;
+  }
 
-    glm::vec3 pos(a * cosA,
-        sin(static_cast<float>(dt)) * body.vertical_oscillation_amplitude,
-        b * sinA);
+  glm::vec3 pos(a * cosA,
+                sin(static_cast<float>(dt)) *
+                    body.vertical_oscillation_amplitude,
+                b * sinA);
 
-    glm::mat4 tMat = glm::translate(glm::mat4(1.f), pos);
+  glm::mat4 tMat = glm::translate(glm::mat4(1.f), pos);
 
-    glm::mat4 tilt = glm::rotate(glm::mat4(1.f),
-        glm::radians(body.axial_tilt_deg),
-        glm::vec3(0.f, 0.f, 1.f));  
+  glm::mat4 tilt =
+      glm::rotate(glm::mat4(1.f), glm::radians(body.axial_tilt_deg),
+                  glm::vec3(0.f, 0.f, 1.f));
 
-    glm::mat4 spin = body.skip_spin
-        ? glm::mat4(1.f)
-        : glm::rotate(glm::mat4(1.f), spinAngle, glm::vec3(0.f, 1.f, 0.f));
+  glm::mat4 spin = body.skip_spin ? glm::mat4(1.f)
+                                  : glm::rotate(glm::mat4(1.f), spinAngle,
+                                                glm::vec3(0.f, 1.f, 0.f));
 
-    glm::mat4 scale = glm::scale(glm::vec3(body.scale));
+  glm::mat4 scale = glm::scale(glm::vec3(body.scale));
 
-    obj->Update(tMat * tilt * spin * scale);
+  obj->Update(tMat * tilt * spin * scale);
 }
-
 
 std::unique_ptr<Object> &Graphics::get_planet_model(Planet focused_planet) {
   switch (focused_planet) {
@@ -386,8 +387,6 @@ void Graphics::Update(double dt, Mode mode, Planet focused_planet) {
   updateOrbitalBody(halley, dt, SolarSystem::Halley);
   halley_line->add_position(
       glm::vec3((sun->GetModel() * halley->GetModel())[3]));
-
-
 }
 
 void Graphics::Render(Mode mode) {
@@ -509,11 +508,10 @@ void Graphics::Render(Mode mode) {
   neptune->Render(shader_var_locs);
   stack.pop();
 
-
-  //Halley
+  // Halley
   stack.push(stack.top() * halley->GetModel());
   glUniformMatrix4fv(shader_var_locs.m_modelMatrix, 1, GL_FALSE,
-      glm::value_ptr(stack.top()));
+                     glm::value_ptr(stack.top()));
   halley->Render(shader_var_locs);
 
   stack.pop();
@@ -543,8 +541,8 @@ void Graphics::Render(Mode mode) {
     saturn_line->render(m_camera->GetProjection(), m_camera->GetView());
     uranus_line->render(m_camera->GetProjection(), m_camera->GetView());
     neptune_line->render(m_camera->GetProjection(), m_camera->GetView());
-    halley_line->render(m_camera->GetProjection(), m_camera->GetView());//fddff
-
+    halley_line->render(m_camera->GetProjection(),
+                        m_camera->GetView()); // fddff
   }
   // Get any errors from OpenGL
   auto error = glGetError();
