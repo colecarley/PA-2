@@ -127,8 +127,9 @@ bool Shader::AddShader(GLenum ShaderType) {
 					vec3 normal;\
 					if (has_normal_map) {\
 						normal = normalize(norm + texture(samp2, tex_coord).xyz * 2 - 1);\
+					} else {\
+						normal = normalize(norm);\
 					}\
-					normal = normalize(norm);\
 					vec3 light_dir = normalize(light_pos - frag_pos);\
 					float diff = max(dot(normal, light_dir), 0.0);\
 					vec3 diffuse = (diff * material.diffuse) * light_color;\

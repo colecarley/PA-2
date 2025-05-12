@@ -5,13 +5,12 @@ struct OrbitalBody {
   float spin_speed;
   float orbit_radius;
   float scale;
-  float eccentricity = 0.0f;// 0-1?
+  float eccentricity = 0.0f; // 0-1?
   float axial_tilt_deg = 0.0f;
 
   bool use_negative_orbit = false;
   float vertical_oscillation_amplitude = 0.0f;
   bool skip_spin = false;
-
 };
 
 struct Belt {
@@ -146,6 +145,12 @@ const OrbitalBody Haumea = {HAUMEA_ORBIT_SPEED, 0.04f, HAUMEA_RADIUS,
 const OrbitalBody Eris = {ERIS_ORBIT_SPEED, 0.03f, ERIS_RADIUS,
                           ERIS_SCALE}; // Distant dwarf planet
 
-const OrbitalBody Halley = { HALLEY_ORBIT_SPEED, HALLEY_SPIN_SPEED, HALLEY_RADIUS,
-                            HALLEY_SCALE , 0.6f, 50.f, true, 1.f};
+const OrbitalBody Halley = {HALLEY_ORBIT_SPEED,
+                            HALLEY_SPIN_SPEED,
+                            HALLEY_RADIUS,
+                            HALLEY_SCALE,
+                            0.6f,
+                            50.f,
+                            true,
+                            1.f};
 } // namespace SolarSystem

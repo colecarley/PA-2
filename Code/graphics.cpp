@@ -267,6 +267,7 @@ bool Graphics::Initialize(int width, int height) {
 
   return true;
 }
+
 void Graphics::updateOrbitalBody(std::unique_ptr<Object> &obj, double dt,
                                  const OrbitalBody &body) {
   float orbitAngle = static_cast<float>(dt) * body.orbit_speed;
@@ -340,7 +341,7 @@ void Graphics::Update(double dt, Mode mode, Planet focused_planet) {
     this->m_camera->set_view(glm::lookAt(this->m_camera->get_position(),
                                          this->m_camera->get_front(),
                                          this->m_camera->get_up()));
-  } else {
+  } else { // exploration mode
     tmat = glm::translate(glm::mat4(1),
                           this->m_camera->get_position() +
                               glm::normalize(this->m_camera->get_front()));
