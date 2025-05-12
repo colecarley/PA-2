@@ -36,8 +36,13 @@ private:
   float last_time = 0;
   float yaw = 0;
   float pitch = M_PI;
+	float speed = 0;
   bool first_mouse = true;
   std::unordered_set<int> pressed_keys;
+
+  Camera cached_camera;
+  float cached_yaw;
+  float cached_pitch;
 
   std::unique_ptr<Graphics> m_graphics;
   Mode mode = PLANETARY_OBSERVATION;

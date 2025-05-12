@@ -15,6 +15,7 @@ public:
   void Render(const ShaderVariableLocations &, bool is_emissive = false);
   glm::mat4 GetModel();
   void set_material(Material m);
+  Material &get_material();
 
 protected:
   virtual void createVertices() = 0;

@@ -34,8 +34,6 @@ void Object::Initialize(const ShaderVariableLocations &locs) {
   float tvec2 = glm::linearRand(-5.f, 5.f);
   float tvec3 = glm::linearRand(-2.f, 2.f);
 
-  
-
   // apply translation to identify matrix, assign to model
   model = glm::translate(glm::mat4(1.0f), glm::vec3(tvec1, tvec2, tvec3));
 
@@ -48,9 +46,9 @@ void Object::Initialize(const ShaderVariableLocations &locs) {
   model *= glm::rotate(glm::mat4(1.0f), angle, axis);
 
   // Enable vertex arr, never disable
-  glEnableVertexAttribArray(locs.m_vertPos);   // location 0
-  glEnableVertexAttribArray(locs.m_vertNorm);  // location 1
-  glEnableVertexAttribArray(locs.m_vertText);  // location 2
+  glEnableVertexAttribArray(locs.m_vertPos);  // location 0
+  glEnableVertexAttribArray(locs.m_vertNorm); // location 1
+  glEnableVertexAttribArray(locs.m_vertText); // location 2
 
   glBindVertexArray(0);
 }
@@ -108,3 +106,5 @@ void Object::Render(const ShaderVariableLocations &locs, bool is_emissive) {
 }
 
 void Object::set_material(Material m) { this->material = m; }
+
+Material &Object::get_material() { return this->material; }

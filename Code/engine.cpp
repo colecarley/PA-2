@@ -76,6 +76,8 @@ bool Engine::Initialize() {
     return false;
   }
 
+  cached_camera = *m_graphics->getCamera();
+
   // No errors
   return true;
 }
@@ -96,7 +98,6 @@ void Engine::ProcessInput() {
   }
 
   std::unique_ptr<Camera> &camera = this->m_graphics->getCamera();
-  float speed = 2;
   glm::vec3 &camera_front = camera->get_front();
   glm::vec3 &camera_up = camera->get_up();
   glm::vec3 norm_cross = glm::normalize(glm::cross(camera_front, camera_up));
@@ -109,11 +110,16 @@ void Engine::ProcessInput() {
     int a_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A);
     int d_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D);
 
+    delta += speed * camera_front * dt;
     if (w_key == GLFW_PRESS) {
-      delta += speed * camera_front * dt;
+      if (speed < 5) {
+        speed += 0.01;
+      }
     }
     if (s_key == GLFW_PRESS) {
-      delta -= speed * camera_front * dt;
+      if (speed > 0) {
+        speed -= 0.01;
+      }
     }
     if (a_key == GLFW_PRESS) {
       delta -= speed * norm_cross * dt;
@@ -190,4 +196,16 @@ void Engine::switch_modes() {
   } else {
     this->mode = PLANETARY_OBSERVATION;
   }
+
+  auto new_cache = *this->m_graphics->getCamera();
+  auto new_yaw_cache = this->yaw;
+  auto new_pitch_cache = this->pitch;
+
+  this->m_graphics->set_camera(cached_camera);
+  this->yaw = this->cached_yaw;
+  this->pitch = this->cached_pitch;
+
+  this->cached_camera = new_cache;
+  this->cached_pitch = new_pitch_cache;
+  this->cached_yaw = new_yaw_cache;
 }

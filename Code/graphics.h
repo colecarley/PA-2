@@ -3,6 +3,7 @@
 #include "asteroid_belt.h"
 #include "camera.h"
 #include "graphics_headers.h"
+#include "line.h"
 #include "mode.h"
 #include "object.h"
 #include "shader.h"
@@ -19,6 +20,7 @@ public:
   void Update(double dt, Mode mode, Planet focused_planet);
   void Render(Mode mode);
   std::unique_ptr<Camera> &getCamera();
+  void set_camera(Camera);
 
 private:
   std::unique_ptr<Object> &get_planet_model(Planet focused_planet);
@@ -51,6 +53,15 @@ private:
   std::unique_ptr<Object> neptune;
 
   std::unique_ptr<Object> halley; // comet
+
+  std::unique_ptr<Line> earth_line;
+  std::unique_ptr<Line> mercury_line;
+  std::unique_ptr<Line> venus_line;
+  std::unique_ptr<Line> mars_line;
+  std::unique_ptr<Line> jupiter_line;
+  std::unique_ptr<Line> saturn_line;
+  std::unique_ptr<Line> uranus_line;
+  std::unique_ptr<Line> neptune_line;
 
   std::unique_ptr<Shader> skybox_shader;
   std::unique_ptr<Skybox> skybox;

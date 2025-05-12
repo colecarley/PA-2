@@ -15,14 +15,13 @@ struct OrbitalBody {
 };
 
 struct Belt {
-    float radius;
-    float jitter;        
-    float vertFactor;    
-    float minScale;
-    float maxScale;
-    unsigned int count;
+  float radius;
+  float jitter;
+  float vertFactor;
+  float minScale;
+  float maxScale;
+  unsigned int count;
 };
-
 
 namespace SolarSystem {
 
@@ -96,14 +95,14 @@ const float HAUMEA_SCALE = 0.25f;
 const float ERIS_SCALE = 0.3f;
 const float HALLEY_SCALE = 0.01f;
 
-// 
+//
 
 const Belt MainAsteroidBelt{
-    100.0f,   // radius
-    40.0f,    // jitter
+    100.0f, // radius
+    40.0f,  // jitter
     5.f,    // vertical factor
-    0.001f,   // min scale
-    0.01f,   // max scale
+    0.001f, // min scale
+    0.01f,  // max scale
     10000   // instance count
 };
 
