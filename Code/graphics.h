@@ -53,7 +53,7 @@ private:
 
   std::unique_ptr<Object> ship;
 
-  std::shared_ptr<Object> asteroid;
+  std::shared_ptr<Mesh> asteroid;
   std::unique_ptr<AsteroidBelt> asteroid_belt;
 
   std::unique_ptr<Object> sun;

@@ -1,84 +1,88 @@
+// asteroid_belt.cpp
 #include "asteroid_belt.h"
 #include <cstdlib>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
 AsteroidBelt::AsteroidBelt(std::shared_ptr<Mesh> asteroidMesh,
-                           unsigned int count)
-    : mesh(asteroidMesh), instanceCount(count) {}
+    const BeltSettings& settings)
+    : mesh(std::move(asteroidMesh)),
+    cfg(settings),
+    instanceCount(settings.count) {
+}
 
 void AsteroidBelt::Initialize() {
-  // std::cout << "[AsteroidBelt] Initialize() called\n";
 
-  float radius = 6.0f;
-  float offset = 1.5f;
+    modelMatrices.reserve(instanceCount);
 
-  for (unsigned int i = 0; i < instanceCount; ++i) {
-    glm::mat4 model(1.0f);
-    float angle = (float)i / (float)instanceCount * 360.0f;
+    for (unsigned int i = 0; i < instanceCount; ++i) {
+        glm::mat4 model(1.0f);
+        float angle = static_cast<float>(i) / instanceCount * 360.0f;
 
-    float displacement = ((rand() % (int)(2 * offset * 100)) / 100.0f) - offset;
-    float x = sin(glm::radians(angle)) * radius + displacement;
-    displacement = ((rand() % (int)(2 * offset * 100)) / 100.0f) - offset;
-    float y = displacement * 0.4f;
-    displacement = ((rand() % (int)(2 * offset * 100)) / 100.0f) - offset;
-    float z = cos(glm::radians(angle)) * radius + displacement;
+        auto randf = [](float a, float b) {
+            return a + static_cast<float>(rand()) / RAND_MAX * (b - a);
+            };
 
-    model = glm::translate(model, glm::vec3(x, y, z));
-    float scale = ((rand() % 20) / 100.0f) + 0.05f;
-    model = glm::scale(model, glm::vec3(scale));
-    float rotAngle = (rand() % 360);
-    model =
-        glm::rotate(model, glm::radians(rotAngle), glm::vec3(0.4f, 0.6f, 0.8f));
+        float x = std::sin(glm::radians(angle)) * cfg.radius
+            + randf(-cfg.jitter, cfg.jitter);
+        float y = randf(-cfg.vertFactor, cfg.vertFactor);
+        float z = std::cos(glm::radians(angle)) * cfg.radius
+            + randf(-cfg.jitter, cfg.jitter);
 
-    modelMatrices.push_back(model);
-  }
+        model = glm::translate(model, { x, y, z });
 
-  // 1. Generate and bind the instance VBO
-  glGenBuffers(1, &instanceVBO);
-  glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-  glBufferData(GL_ARRAY_BUFFER, modelMatrices.size() * sizeof(glm::mat4),
-               &modelMatrices[0], GL_STATIC_DRAW);
+        float scl = randf(cfg.minScale, cfg.maxScale);
+        model = glm::scale(model, glm::vec3(scl));
 
-  // 2. Bind the base mesh VAO AFTER the mesh has been initialized
-  GLuint vao = mesh->getVAO();
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // Must bind here!
+        float rotAngle = randf(0.0f, 360.0f);
+        model = glm::rotate(model, glm::radians(rotAngle),
+            glm::vec3(0.4f, 0.6f, 0.8f));
 
-  std::size_t vec4Size = sizeof(glm::vec4);
-  for (int i = 0; i < 4; ++i) {
-    glEnableVertexAttribArray(3 + i);
-    glVertexAttribPointer(3 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
-                          (void *)(i * vec4Size));
-    glVertexAttribDivisor(3 + i, 1);
-  }
+        modelMatrices.push_back(model);
+    }
 
-  glBindVertexArray(0);
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER,
+        modelMatrices.size() * sizeof(glm::mat4),
+        modelMatrices.data(),
+        GL_STATIC_DRAW);
+
+    GLuint vao = mesh->getVAO();
+    glBindVertexArray(vao);            
+
+    std::size_t vec4Size = sizeof(glm::vec4);
+    for (int i = 0; i < 4; ++i) {
+        GLuint loc = 3 + i; 
+        glEnableVertexAttribArray(loc);
+        glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE,
+            sizeof(glm::mat4),
+            reinterpret_cast<void*>(i * vec4Size));
+        glVertexAttribDivisor(loc, 1);
+    }
+
+    glBindVertexArray(0);
 }
+
 
 void AsteroidBelt::Render(GLint projectionLoc, GLint viewLoc,
-                          GLint useInstancingLoc, const glm::mat4 &projection,
-                          const glm::mat4 &view) {
-  glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
-  glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+    GLint useInstancingLoc,
+    const glm::mat4& projection,
+    const glm::mat4& view)
+{
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
 
-  glUniform1i(useInstancingLoc, 1); // Enable instancing
+    glUniform1i(useInstancingLoc, 1);
 
-  GLuint vao = mesh->getVAO();
-  glBindVertexArray(vao);
+    glBindVertexArray(mesh->getVAO());
+    glDrawElementsInstanced(GL_TRIANGLES,
+        mesh->getIndexCount(),
+        GL_UNSIGNED_INT,
+        nullptr,
+        instanceCount);
+    glBindVertexArray(0);
 
-  // std::cout << "[AsteroidBelt] Rendering " << instanceCount
-  //     << " instances with VAO " << vao
-  //     << ", Index count = " << mesh->getIndexCount() << std::endl;
-
-  glDrawElementsInstanced(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_INT,
-                          0, instanceCount);
-
-  glBindVertexArray(0);
-  glUniform1i(useInstancingLoc, 0); // Reset
-
-  GLenum err = glGetError();
-  if (err != GL_NO_ERROR) {
-    std::cerr << "[AsteroidBelt] GL ERROR: " << err << std::endl;
-  }
+    glUniform1i(useInstancingLoc, 0);
 }
+

@@ -168,15 +168,13 @@ bool Graphics::Initialize(int width, int height) {
 
   // Create objects
 
-  // asteroid =
-  //     std::make_shared<Mesh>("../assets/Asteroid.obj",
-  //     "../assets/2k_sun.jpg");
-  //
-  // asteroid->Initialize(m_vertPos, m_vertNorm, m_vertText);
-  //
-  // asteroid_belt =
-  //     std::make_unique<AsteroidBelt>(std::dynamic_pointer_cast<Mesh>(asteroid));
-  // asteroid_belt->Initialize();
+  asteroid = std::make_shared<Mesh>("../assets/Asteroid2.obj",
+      "../assets/Asteroid.jpg");
+  asteroid->Initialize(shader_var_locs);
+
+  asteroid_belt = std::make_unique<AsteroidBelt>(
+      asteroid, SolarSystem::MainAsteroidBelt);
+  asteroid_belt->Initialize();
 
   ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
                                 "../assets/SpaceShip-1.png");
@@ -345,10 +343,6 @@ void Graphics::Render(Mode mode) {
     ship->Render(shader_var_locs);
   }
 
-  // Asteroid Belt (NOT WORKING??)
-
-  // asteroid_belt->Render(m_projectionMatrix, m_viewMatrix, use_instancing_loc,
-  //                       m_camera->GetProjection(), m_camera->GetView());
 
   // Hierarchical Updates
 
@@ -444,6 +438,22 @@ void Graphics::Render(Mode mode) {
 
   stack.pop(); // Sun
   stack.pop(); // IMat
+
+  // Asteroid Belt
+
+  glUniform1i(shader_var_locs.use_instancing_loc, 1); // enable use_instancing
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, asteroid->getTextureID());
+  glUniform1i(shader_var_locs.m_samplerLoc, 0);
+
+  asteroid_belt->Render(shader_var_locs.m_projectionMatrix,
+      shader_var_locs.m_viewMatrix,
+      shader_var_locs.use_instancing_loc,
+      m_camera->GetProjection(),
+      m_camera->GetView());
+
+  glUniform1i(shader_var_locs.use_instancing_loc, 0); // disable use_instancing
 
   // Get any errors from OpenGL
   auto error = glGetError();

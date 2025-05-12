@@ -10,6 +10,16 @@ struct OrbitalBody {
   bool skip_spin = false;
 };
 
+struct BeltSettings {
+    float radius;
+    float jitter;        
+    float vertFactor;    
+    float minScale;
+    float maxScale;
+    unsigned int count;
+};
+
+
 namespace SolarSystem {
 
 // Orbital Speeds (dt multipliers)
@@ -77,6 +87,17 @@ const float NEPTUNE_SCALE = 0.55f;
 const float CERES_SCALE = 0.2f;
 const float HAUMEA_SCALE = 0.25f;
 const float ERIS_SCALE = 0.3f;
+
+// 
+
+const BeltSettings MainAsteroidBelt{
+    100.0f,   // radius
+    40.0f,    // jitter
+    5.f,    // vertical factor
+    0.001f,   // min scale
+    0.01f,   // max scale
+    10000   // instance count
+};
 
 // Orbital body definitions
 const OrbitalBody Sun = {0.0f, SUN_SPIN_SPEED, SUN_RADIUS, SUN_SCALE};
