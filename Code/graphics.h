@@ -36,7 +36,7 @@ private:
 
   std::shared_ptr<Mesh> asteroid;
   std::unique_ptr<AsteroidBelt> asteroid_belt;
-  
+
   std::unique_ptr<Object> sun;
   std::unique_ptr<Object> mercury;
   std::unique_ptr<Object> venus;
@@ -62,6 +62,7 @@ private:
   std::unique_ptr<Line> saturn_line;
   std::unique_ptr<Line> uranus_line;
   std::unique_ptr<Line> neptune_line;
+  std::unique_ptr<Line> halley_line;
 
   std::unique_ptr<Shader> skybox_shader;
   std::unique_ptr<Skybox> skybox;
