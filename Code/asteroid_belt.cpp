@@ -6,7 +6,7 @@
 
 AsteroidBelt::AsteroidBelt(std::shared_ptr<Mesh> asteroidMesh,
                            const Belt &settings)
-    : mesh(std::move(asteroidMesh)), settings(settings),
+    : settings(settings), mesh(std::move(asteroidMesh)),
       instanceCount(settings.count) {}
 
 void AsteroidBelt::Initialize() {
@@ -15,10 +15,10 @@ void AsteroidBelt::Initialize() {
 
   for (unsigned int i = 0; i < instanceCount; ++i) {
     glm::mat4 model(1.0f);
-    float angle = static_cast<float>(i) / instanceCount * 360.0f;
+    float angle = (float)i / instanceCount * 360.0f;
 
     auto randf = [](float a, float b) {
-      return a + static_cast<float>(rand()) / RAND_MAX * (b - a);
+      return a + (float)rand() / RAND_MAX * (b - a);
     };
 
     float x = std::sin(glm::radians(angle)) * settings.radius +

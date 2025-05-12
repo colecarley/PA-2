@@ -4,10 +4,8 @@
 #include "mode.h"
 #include "ring.h"
 #include "sphere.h"
-#include <exception>
 #include <memory>
 #include <stack>
-#include <stdexcept>
 
 Graphics::Graphics() {}
 Graphics::~Graphics() {}
