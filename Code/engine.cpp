@@ -98,7 +98,6 @@ void Engine::ProcessInput() {
   }
 
   std::unique_ptr<Camera> &camera = this->m_graphics->getCamera();
-  float speed = 2;
   glm::vec3 &camera_front = camera->get_front();
   glm::vec3 &camera_up = camera->get_up();
   glm::vec3 norm_cross = glm::normalize(glm::cross(camera_front, camera_up));
@@ -111,11 +110,16 @@ void Engine::ProcessInput() {
     int a_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_A);
     int d_key = glfwGetKey(m_window->getWindow().get(), GLFW_KEY_D);
 
+    delta += speed * camera_front * dt;
     if (w_key == GLFW_PRESS) {
-      delta += speed * camera_front * dt;
+      if (speed < 5) {
+        speed += 0.01;
+      }
     }
     if (s_key == GLFW_PRESS) {
-      delta -= speed * camera_front * dt;
+      if (speed > 0) {
+        speed -= 0.01;
+      }
     }
     if (a_key == GLFW_PRESS) {
       delta -= speed * norm_cross * dt;
