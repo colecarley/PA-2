@@ -55,7 +55,7 @@ const float CERES_ORBIT_SPEED = 0.003f;
 const float HAUMEA_ORBIT_SPEED = 0.002f;
 const float ERIS_ORBIT_SPEED = 0.001f;
 const float HALLEY_ORBIT_SPEED = 0.05f;
-const float HALLEY_SPIN_SPEED = 0.01f;
+const float HALLEY_SPIN_SPEED = 0.002f;
 
 // Orbital Radii (visual spacing)
 const float SUN_RADIUS = 0.0f;
@@ -74,7 +74,7 @@ const float NEPTUNE_RADIUS = 18.0f;
 const float CERES_RADIUS = 20.0f;
 const float HAUMEA_RADIUS = 23.0f;
 const float ERIS_RADIUS = 26.0f;
-const float HALLEY_RADIUS = 20.f;
+const float HALLEY_RADIUS = 60.f;
 
 // Scales (relative to Sun = 1.0)
 const float SUN_SCALE = 1.0f;
@@ -93,7 +93,7 @@ const float NEPTUNE_SCALE = 0.55f;
 const float CERES_SCALE = 0.2f;
 const float HAUMEA_SCALE = 0.25f;
 const float ERIS_SCALE = 0.3f;
-const float HALLEY_SCALE = 0.01f;
+const float HALLEY_SCALE = 0.004f;
 
 //
 
@@ -145,5 +145,5 @@ const OrbitalBody Eris = {ERIS_ORBIT_SPEED, 0.03f, ERIS_RADIUS,
                           ERIS_SCALE}; // Distant dwarf planet
 
 const OrbitalBody Halley = { HALLEY_ORBIT_SPEED, HALLEY_SPIN_SPEED, HALLEY_RADIUS,
-                            HALLEY_SCALE , 3.f, 30.f, true, 1.f};
+                            HALLEY_SCALE , 0.6f, 50.f, true, 1.f};
 } // namespace SolarSystem

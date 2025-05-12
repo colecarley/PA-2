@@ -179,11 +179,6 @@ bool Graphics::Initialize(int width, int height) {
       std::make_unique<AsteroidBelt>(asteroid, SolarSystem::MainAsteroidBelt);
   asteroid_belt->Initialize();
 
-  
-  halley = std::make_unique<Mesh>("../assets/halley.obj",
-        "../assets/planetary_textures/comet.jpg");//ss
-  halley->Initialize(shader_var_locs);
-
 
   ship = std::make_unique<Mesh>("../assets/SpaceShip-1.obj",
                                 "../assets/SpaceShip-1.png");
@@ -260,6 +255,11 @@ bool Graphics::Initialize(int width, int height) {
                                "../assets/planetary_textures/Neptune-n.jpg");
   neptune->Initialize(shader_var_locs);
   neptune_line = std::make_unique<Line>(1000);
+
+  halley = std::make_unique<Mesh>("../assets/halley.obj",
+      "../assets/planetary_textures/comet.jpg");//ss
+  halley->Initialize(shader_var_locs);
+  halley_line = std::make_unique<Line>(1000);
 
   // enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -384,6 +384,9 @@ void Graphics::Update(double dt, Mode mode, Planet focused_planet) {
       glm::vec3((sun->GetModel() * neptune->GetModel())[3]));
 
   updateOrbitalBody(halley, dt, SolarSystem::Halley);
+  halley_line->add_position(
+      glm::vec3((sun->GetModel() * halley->GetModel())[3]));
+
 
 }
 
@@ -540,6 +543,8 @@ void Graphics::Render(Mode mode) {
     saturn_line->render(m_camera->GetProjection(), m_camera->GetView());
     uranus_line->render(m_camera->GetProjection(), m_camera->GetView());
     neptune_line->render(m_camera->GetProjection(), m_camera->GetView());
+    halley_line->render(m_camera->GetProjection(), m_camera->GetView());//fddff
+
   }
   // Get any errors from OpenGL
   auto error = glGetError();
