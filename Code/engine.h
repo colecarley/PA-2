@@ -4,6 +4,7 @@
 #include "mode.h"
 #include "window.h"
 #include <assert.h>
+#include <unordered_set>
 
 /**
  * graphics engine used by the main function
@@ -36,9 +37,11 @@ private:
   float yaw = 0;
   float pitch = M_PI;
   bool first_mouse = true;
+  std::unordered_set<int> pressed_keys;
 
   std::unique_ptr<Graphics> m_graphics;
   Mode mode = PLANETARY_OBSERVATION;
+  Planet focused_planet = EARTH;
 
   bool m_running;
 };

@@ -10,7 +10,7 @@ struct OrbitalBody {
   bool skip_spin = false;
 };
 
-struct BeltSettings {
+struct Belt {
     float radius;
     float jitter;        
     float vertFactor;    
@@ -90,7 +90,7 @@ const float ERIS_SCALE = 0.3f;
 
 // 
 
-const BeltSettings MainAsteroidBelt{
+const Belt MainAsteroidBelt{
     100.0f,   // radius
     40.0f,    // jitter
     5.f,    // vertical factor

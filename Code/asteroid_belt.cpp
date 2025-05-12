@@ -5,9 +5,9 @@
 #include <iostream>
 
 AsteroidBelt::AsteroidBelt(std::shared_ptr<Mesh> asteroidMesh,
-    const BeltSettings& settings)
+    const Belt& settings)
     : mesh(std::move(asteroidMesh)),
-    cfg(settings),
+    settings(settings),
     instanceCount(settings.count) {
 }
 
@@ -23,15 +23,15 @@ void AsteroidBelt::Initialize() {
             return a + static_cast<float>(rand()) / RAND_MAX * (b - a);
             };
 
-        float x = std::sin(glm::radians(angle)) * cfg.radius
-            + randf(-cfg.jitter, cfg.jitter);
-        float y = randf(-cfg.vertFactor, cfg.vertFactor);
-        float z = std::cos(glm::radians(angle)) * cfg.radius
-            + randf(-cfg.jitter, cfg.jitter);
+        float x = std::sin(glm::radians(angle)) * settings.radius
+            + randf(-settings.jitter, settings.jitter);
+        float y = randf(-settings.vertFactor, settings.vertFactor);
+        float z = std::cos(glm::radians(angle)) * settings.radius
+            + randf(-settings.jitter, settings.jitter);
 
         model = glm::translate(model, { x, y, z });
 
-        float scl = randf(cfg.minScale, cfg.maxScale);
+        float scl = randf(settings.minScale, settings.maxScale);
         model = glm::scale(model, glm::vec3(scl));
 
         float rotAngle = randf(0.0f, 360.0f);
