@@ -1,7 +1,10 @@
 #include "camera.h"
 
 Camera::Camera() {}
-
+Camera::Camera(const Camera &other)
+    : camera_pos(other.camera_pos), camera_front(other.camera_front),
+      camera_up(other.camera_up), fov(other.fov), view(other.view),
+      projection(other.projection) {}
 Camera::~Camera() {}
 
 bool Camera::Initialize(int w, int h) {
@@ -44,16 +47,11 @@ void Camera::update_perspective(float fov_delta, int w, int h) {
 }
 
 glm::mat4 Camera::GetProjection() { return projection; }
-
 glm::mat4 Camera::GetView() { return view; }
 void Camera::set_view(glm::mat4 v) { this->view = v; }
-
 glm::vec3 &Camera::get_front() { return this->camera_front; }
-
 glm::vec3 &Camera::get_up() { return this->camera_up; }
-
 glm::vec3 &Camera::get_position() { return this->camera_pos; }
-
 void Camera::set_front(glm::vec3 f) { this->camera_front = f; }
 void Camera::set_up(glm::vec3 u) { this->camera_up = u; }
 void Camera::set_position(glm::vec3 p) { this->camera_pos = p; }

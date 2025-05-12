@@ -19,6 +19,7 @@ public:
   void Update(double dt, Mode mode, Planet focused_planet);
   void Render(Mode mode);
   std::unique_ptr<Camera> &getCamera();
+  void set_camera(Camera);
 
 private:
   std::unique_ptr<Object> &get_planet_model(Planet focused_planet);

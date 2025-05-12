@@ -76,6 +76,8 @@ bool Engine::Initialize() {
     return false;
   }
 
+  cached_camera = *m_graphics->getCamera();
+
   // No errors
   return true;
 }
@@ -190,4 +192,16 @@ void Engine::switch_modes() {
   } else {
     this->mode = PLANETARY_OBSERVATION;
   }
+
+  auto new_cache = *this->m_graphics->getCamera();
+  auto new_yaw_cache = this->yaw;
+  auto new_pitch_cache = this->pitch;
+
+  this->m_graphics->set_camera(cached_camera);
+  this->yaw = this->cached_yaw;
+  this->pitch = this->cached_pitch;
+
+  this->cached_camera = new_cache;
+  this->cached_pitch = new_pitch_cache;
+  this->cached_yaw = new_yaw_cache;
 }

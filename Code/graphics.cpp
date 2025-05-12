@@ -516,3 +516,7 @@ std::string Graphics::ErrorString(GLenum error) {
 }
 
 std::unique_ptr<Camera> &Graphics::getCamera() { return this->m_camera; }
+
+void Graphics::set_camera(Camera camera) {
+  this->m_camera = std::make_unique<Camera>(camera);
+}

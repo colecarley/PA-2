@@ -4,6 +4,7 @@
 class Camera {
 public:
   Camera();
+  Camera(const Camera &other);
   ~Camera();
   bool Initialize(int w, int h);
   glm::mat4 GetProjection();
